@@ -1,0 +1,352 @@
+{
+  "game": {
+    "title": "LAST FIGHTER",
+    "tagline": "Sobreviva à Última Arena",
+    "lore": "Quando o céu se partiu, a Última Arena convocou os guerreiros que restaram. Não basta vencer. É preciso sobreviver."
+  },
+  "common": {
+    "back": "VOLTAR",
+    "confirm": "CONFIRMAR",
+    "yes": "SIM",
+    "no": "NÃO",
+    "on": "ATIVADO",
+    "off": "DESATIVADO",
+    "loading": "CARREGANDO",
+    "level": "NÍVEL {level}",
+    "xp": "{xp} EXP",
+    "navHint": "↑ ↓ navegar · ENTER confirmar · ESC voltar",
+    "audioHint": "Clique ou pressione uma tecla para ativar o som"
+  },
+  "menu": {
+    "play": "JOGAR",
+    "continue": "CONTINUAR ARENA",
+    "characters": "PERSONAGENS",
+    "howToPlay": "COMO JOGAR",
+    "settings": "CONFIGURAÇÕES",
+    "credits": "CRÉDITOS",
+    "record": "{wins} vitórias · {cleared} arenas conquistadas"
+  },
+  "select": {
+    "title": "ESCOLHA SEU LUTADOR",
+    "browseTitle": "LUTADORES",
+    "fight": "LUTAR",
+    "locked": "🔒 BLOQUEADO",
+    "unlockWins": "Vença {count} batalhas para desbloquear ({current}/{count})",
+    "archetype": "Arquétipo",
+    "mainAttribute": "Atributo principal",
+    "weakness": "Fraqueza",
+    "style": "Estilo",
+    "origin": "Origem",
+    "moves": "GOLPES",
+    "difficulty": "DIFICULDADE",
+    "stage": "ETAPA {stage}/{total}",
+    "nextOpponent": "Próximo oponente: {name}",
+    "health": "Vida {value}",
+    "cost": "{cost} energia",
+    "cooldown": "{seconds}s recarga"
+  },
+  "archetypes": {
+    "balanced": "Equilibrado",
+    "tank": "Tanque",
+    "speed": "Veloz",
+    "assassin": "Assassino",
+    "zoner": "Zoner",
+    "technical": "Técnico",
+    "control": "Controle",
+    "combo": "Combo",
+    "brute": "Força bruta",
+    "defense": "Defensivo"
+  },
+  "ratings": {
+    "power": "Força",
+    "defense": "Defesa",
+    "speed": "Velocidade",
+    "range": "Alcance",
+    "mobility": "Mobilidade",
+    "technique": "Técnica"
+  },
+  "slots": {
+    "light": "Ataque leve",
+    "heavy": "Ataque pesado",
+    "crouchLight": "Leve agachado",
+    "crouchHeavy": "Pesado agachado",
+    "airLight": "Leve aéreo",
+    "airHeavy": "Pesado aéreo",
+    "skill": "Habilidade",
+    "special": "Especial",
+    "ultimate": "Ultimate"
+  },
+  "difficulty": {
+    "easy": "FÁCIL",
+    "normal": "NORMAL",
+    "hard": "DIFÍCIL"
+  },
+  "battle": {
+    "round": "RODADA {round}",
+    "finalRound": "RODADA FINAL",
+    "fight": "LUTE!",
+    "ko": "K.O.",
+    "timeUp": "TEMPO!",
+    "doubleKo": "DUPLO K.O.",
+    "draw": "EMPATE",
+    "wins": "{name} VENCE!",
+    "hits": "{count} GOLPES",
+    "damage": "{damage} de dano",
+    "blocked": "BLOQUEIO",
+    "armor": "ARMADURA",
+    "stunned": "ATORDOADO!",
+    "perfectDodge": "ESQUIVA PERFEITA",
+    "noEnergy": "SEM ENERGIA",
+    "cooldown": "RECARGANDO",
+    "ultimateReady": "ULTIMATE PRONTA",
+    "danger": "PERIGO",
+    "training": "MODO TREINO",
+    "you": "VOCÊ",
+    "cpu": "CPU"
+  },
+  "pause": {
+    "title": "PAUSADO",
+    "resume": "CONTINUAR",
+    "controls": "CONTROLES",
+    "settings": "CONFIGURAÇÕES",
+    "quit": "VOLTAR AO MENU",
+    "confirmQuit": "Abandonar a luta? Esta batalha não será contabilizada."
+  },
+  "victory": {
+    "title": "VITÓRIA!",
+    "next": "PRÓXIMA BATALHA",
+    "menu": "VOLTAR AO MENU",
+    "xpGained": "+{xp} EXP",
+    "levelUp": "SUBIU PARA O NÍVEL {level}!",
+    "unlocked": "NOVO LUTADOR DESBLOQUEADO: {name}",
+    "champion": "CAMPEÃO DA ÚLTIMA ARENA",
+    "championText": "Você sobreviveu a todas as etapas. Novos desafios aguardam.",
+    "rewards": "RECOMPENSAS"
+  },
+  "defeat": {
+    "title": "DERROTA",
+    "retry": "TENTAR NOVAMENTE",
+    "menu": "VOLTAR AO MENU",
+    "hint": "Dica: {tip}"
+  },
+  "tips": {
+    "block": "Segure ESPAÇO para defender. Agache para bloquear golpes baixos.",
+    "dodge": "ESPAÇO + direção esquiva. Esquivar no momento certo rende energia extra.",
+    "combo": "Ataques leves que acertam podem ser cancelados em pesados e habilidades.",
+    "punish": "Golpes que erram deixam o oponente vulnerável. Contra-ataque!",
+    "energy": "Receber e causar dano enche a energia. Com a barra cheia, use a ULTIMATE."
+  },
+  "stats": {
+    "title": "ESTATÍSTICAS",
+    "damageDealt": "Dano causado",
+    "damageTaken": "Dano recebido",
+    "maxCombo": "Maior combo",
+    "skillsUsed": "Habilidades usadas",
+    "time": "Tempo de batalha"
+  },
+  "rewards": {
+    "win": "Vitória",
+    "stage": "Bônus de etapa",
+    "perfect": "Vitória perfeita",
+    "combo": "Combo de 5+ golpes",
+    "fast": "Vitória rápida",
+    "ladder": "Arena conquistada",
+    "effort": "Experiência de combate"
+  },
+  "settings": {
+    "title": "CONFIGURAÇÕES",
+    "audio": "ÁUDIO",
+    "video": "VÍDEO",
+    "gameplay": "JOGO",
+    "controls": "CONTROLES",
+    "language": "IDIOMA",
+    "music": "Música",
+    "sfx": "Efeitos",
+    "ui": "Interface",
+    "mute": "Silenciar tudo",
+    "quality": "Qualidade",
+    "qualityLow": "BAIXA",
+    "qualityMedium": "MÉDIA",
+    "qualityHigh": "ALTA",
+    "particles": "Partículas",
+    "shake": "Tremor de tela",
+    "flashes": "Reduzir flashes",
+    "difficulty": "Dificuldade",
+    "touch": "Controles touch",
+    "touchAuto": "AUTOMÁTICO",
+    "touchOn": "SEMPRE",
+    "touchOff": "NUNCA",
+    "touchOpacity": "Opacidade touch",
+    "keyboard": "Teclado",
+    "pressKey": "Pressione a nova tecla para {action} (ESC cancela)",
+    "swapped": "Tecla trocada com \"{action}\"",
+    "reserved": "Essa tecla é reservada pelo navegador",
+    "saved": "Configuração salva",
+    "resetControls": "RESTAURAR PADRÃO",
+    "languageName": "Português (Brasil)",
+    "languageOnly": "Mais idiomas em breve",
+    "hint": "← → altera · ENTER seleciona"
+  },
+  "actions": {
+    "up": "Pular",
+    "down": "Agachar",
+    "left": "Mover para esquerda",
+    "right": "Mover para direita",
+    "light": "Ataque leve",
+    "heavy": "Ataque pesado",
+    "skill": "Habilidade",
+    "special": "Especial",
+    "ultimate": "Ultimate",
+    "block": "Defesa / Esquiva",
+    "pause": "Pausa"
+  },
+  "keys": {
+    "space": "ESPAÇO",
+    "escape": "ESC",
+    "enter": "ENTER",
+    "shift": "SHIFT",
+    "ctrl": "CTRL",
+    "alt": "ALT",
+    "backspace": "APAGAR"
+  },
+  "tutorial": {
+    "title": "COMO JOGAR",
+    "practice": "PRATICAR",
+    "subtitle": "Selecione uma ação para ver a demonstração.",
+    "move": "Mover",
+    "moveDesc": "Toque duas vezes para frente para correr.",
+    "jump": "Pular",
+    "jumpDesc": "Ataques aéreos acertam quem está defendendo agachado.",
+    "crouch": "Agachar",
+    "crouchDesc": "Desvia de golpes altos e permite defesa baixa.",
+    "light": "Ataque leve",
+    "lightDesc": "Rápido. Repita para encadear um combo.",
+    "heavy": "Ataque pesado",
+    "heavyDesc": "Lento e forte. Empurra e atordoa.",
+    "block": "Defender",
+    "blockDesc": "Segure. Golpes baixos exigem defesa agachada.",
+    "dodge": "Esquivar",
+    "dodgeDesc": "ESPAÇO + direção. Fica invulnerável por um instante.",
+    "skill": "Habilidade",
+    "skillDesc": "Custa energia e tem recarga.",
+    "special": "Especial",
+    "specialDesc": "Segunda habilidade do lutador.",
+    "ultimate": "Ultimate",
+    "ultimateDesc": "Exige a barra de energia cheia.",
+    "tasks": "TAREFAS DO TREINO",
+    "taskMove": "Ande para frente e para trás",
+    "taskJump": "Pule",
+    "taskCrouch": "Agache",
+    "taskLight": "Acerte um ataque leve",
+    "taskHeavy": "Acerte um ataque pesado",
+    "taskCombo": "Faça um combo de 3 golpes",
+    "taskBlock": "Bloqueie um ataque do boneco",
+    "taskDodge": "Esquive",
+    "taskSkill": "Use uma habilidade",
+    "taskUltimate": "Use a ULTIMATE",
+    "done": "Treino concluído! Pressione ESC para voltar.",
+    "energyInfinite": "Energia infinita no treino"
+  },
+  "credits": {
+    "title": "CRÉDITOS",
+    "lines": [
+      "LAST FIGHTER",
+      "Design, programação, arte procedural e áudio sintetizado:",
+      "Desenvolvido com Claude Code",
+      "Motor: Phaser 4 (MIT) · Linguagem: TypeScript · Build: Vite",
+      "Fontes: Russo One e Chakra Petch (SIL Open Font License)",
+      "Todos os personagens, arenas e sons são originais."
+    ]
+  },
+  "rotate": {
+    "title": "GIRE O DISPOSITIVO",
+    "text": "Para jogar LAST FIGHTER, utilize a orientação horizontal."
+  },
+  "errors": {
+    "saveCorrupt": "Seu save estava corrompido e foi restaurado. Uma cópia foi guardada.",
+    "saveFuture": "Seu save é de uma versão mais nova do jogo e não foi alterado.",
+    "fatal": "Algo deu errado. Recarregue a página.",
+    "assetFallback": "Alguns recursos visuais estão usando versões provisórias."
+  },
+  "fighters": {
+    "kael": {
+      "name": "KAEL",
+      "title": "O Último Juramento",
+      "bio": "Último guardião da cidade de Vael, que caiu numa única noite. Kael jurou proteger quem restou e entra na Arena para cumprir a promessa.",
+      "personality": "Disciplinado, calmo, carrega culpa e esperança na mesma medida.",
+      "origin": "Vael, a cidade das muralhas rubras",
+      "style": "Artes marciais da guarda de Vael com brasas canalizadas nos punhos.",
+      "weakness": "Não tem nenhuma vantagem extrema: depende de decisões certas."
+    },
+    "bronn": {
+      "name": "BRONN",
+      "title": "A Muralha",
+      "bio": "Ex-mineiro das Forjas Profundas. Sobreviveu a um desabamento segurando o teto com as próprias mãos. Luta para pagar a dívida da vila que o criou.",
+      "personality": "Paciente, bem-humorado e imóvel como pedra quando decide algo.",
+      "origin": "Forjas Profundas, sob as montanhas de cinza",
+      "style": "Golpes pesados com manoplas de ferro e armadura que absorve impactos.",
+      "weakness": "Lento para andar e esquivar. Sofre contra quem se mantém em movimento."
+    },
+    "nyx": {
+      "name": "NYX",
+      "title": "Véu Sombrio",
+      "bio": "Ninguém sabe o rosto por trás da máscara. Nyx atravessa sombras como portas e caça os organizadores da Arena.",
+      "personality": "Silenciosa, impaciente e implacável com quem hesita.",
+      "origin": "Desconhecida",
+      "style": "Lâminas gêmeas, teleporte curto e combos longos em velocidade extrema.",
+      "weakness": "Pouca vida e pouca defesa: cada erro custa caro."
+    },
+    "shadow": {
+      "name": "REFLEXO",
+      "title": "A Sombra de Si Mesmo"
+    }
+  },
+  "moves": {
+    "kael_jab": { "name": "Golpe Direto", "desc": "Soco rápido. Encadeia no Cruzado." },
+    "kael_cross": { "name": "Cruzado", "desc": "Segundo golpe da sequência." },
+    "kael_roundhouse": { "name": "Chute Circular", "desc": "Finaliza a sequência e empurra." },
+    "kael_heavy": { "name": "Punho de Vael", "desc": "Soco pesado que atordoa." },
+    "kael_low_jab": { "name": "Soco Baixo", "desc": "Golpe baixo rápido." },
+    "kael_sweep": { "name": "Rasteira", "desc": "Golpe baixo que derruba." },
+    "kael_air_kick": { "name": "Chute Aéreo", "desc": "Golpe aéreo rápido." },
+    "kael_air_heavy": { "name": "Queda Rubra", "desc": "Golpe aéreo pesado." },
+    "kael_ember": { "name": "Lâmina de Brasa", "desc": "Lança uma onda de fogo à frente." },
+    "kael_rising": {
+      "name": "Ascensão Rubra",
+      "desc": "Gancho ascendente invulnerável no início. Antiaéreo."
+    },
+    "kael_oath": {
+      "name": "Juramento Final",
+      "desc": "Investida que prende o oponente numa sequência de golpes flamejantes."
+    },
+    "bronn_jab": { "name": "Punho de Ferro", "desc": "Soco direto pesado." },
+    "bronn_hammer": { "name": "Martelo", "desc": "Golpe de cima para baixo que empurra." },
+    "bronn_smash": { "name": "Esmagar", "desc": "Golpe duplo com armadura: aguenta um golpe sem parar." },
+    "bronn_low": { "name": "Soco de Mina", "desc": "Golpe baixo." },
+    "bronn_stomp": { "name": "Pisão", "desc": "Golpe baixo que derruba." },
+    "bronn_air_elbow": { "name": "Cotovelada Aérea", "desc": "Golpe aéreo." },
+    "bronn_air_crush": { "name": "Queda de Rocha", "desc": "Golpe aéreo devastador." },
+    "bronn_tremor": { "name": "Tremor", "desc": "Onda pelo chão. Bloqueie agachado ou pule." },
+    "bronn_charge": { "name": "Investida de Ferro", "desc": "Ombrada com armadura de 2 golpes." },
+    "bronn_collapse": {
+      "name": "Colapso Tectônico",
+      "desc": "Terremoto que atinge todos no chão. Pule no momento certo para evitar."
+    },
+    "nyx_slash1": { "name": "Corte Veloz", "desc": "Primeiro de quatro cortes." },
+    "nyx_slash2": { "name": "Corte Duplo", "desc": "Segundo corte." },
+    "nyx_slash3": { "name": "Corte Triplo", "desc": "Terceiro corte." },
+    "nyx_spin": { "name": "Giro Lunar", "desc": "Giro com dois golpes que fecha a sequência." },
+    "nyx_rising_cross": { "name": "Cruz Ascendente", "desc": "Lança o oponente para o alto." },
+    "nyx_low_slash": { "name": "Corte Rasteiro", "desc": "Golpe baixo rápido." },
+    "nyx_slide": { "name": "Deslize", "desc": "Desliza pelo chão e derruba." },
+    "nyx_air_slash": { "name": "Corte Aéreo", "desc": "Golpe aéreo rápido." },
+    "nyx_dive": { "name": "Mergulho", "desc": "Mergulha em diagonal com as lâminas." },
+    "nyx_kunai": { "name": "Leque de Lâminas", "desc": "Arremessa três kunais em leque." },
+    "nyx_blink": { "name": "Passo Fantasma", "desc": "Teleporta para as costas do oponente e golpeia." },
+    "nyx_eclipse": { "name": "Eclipse", "desc": "Some nas sombras e retalha o oponente de todos os lados." }
+  },
+  "arenas": {
+    "colosseum": { "name": "COLISEU PARTIDO", "desc": "Ruínas ao entardecer onde a Arena começou." },
+    "neon_dock": { "name": "DOCA NEON", "desc": "Um terraço sob a chuva de uma cidade que não dorme." }
+  }
+}

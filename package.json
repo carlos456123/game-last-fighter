@@ -1,0 +1,38 @@
+{
+  "name": "last-fighter",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LAST FIGHTER \u00e2\u20ac\u201d jogo de luta 2D original feito com Phaser 4 + TypeScript.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "build:e2e": "vite build --mode e2e --outDir dist-e2e",
+    "preview:e2e": "vite preview --outDir dist-e2e --port 4173 --strictPort"
+  },
+  "dependencies": {
+    "@fontsource/chakra-petch": "^5.3.0",
+    "@fontsource/russo-one": "^5.3.0",
+    "phaser": "^4.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^24.19.1",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  }
+}

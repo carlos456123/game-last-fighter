@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#07060c" />
+    <meta name="description" content="LAST FIGHTER — jogo de luta 2D original. Sobreviva à Última Arena." />
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <title>LAST FIGHTER</title>
+  </head>
+  <body>
+    <main id="game" aria-label="LAST FIGHTER"></main>
+    <div id="rotate-overlay" role="alert" aria-live="polite">
+      <div class="rotate-icon" aria-hidden="true"></div>
+      <h1 data-i18n="rotate.title">GIRE O DISPOSITIVO</h1>
+      <p data-i18n="rotate.text">Para jogar LAST FIGHTER, utilize a orientação horizontal.</p>
+    </div>
+    <div id="fatal-overlay" role="alert" hidden>
+      <h1>LAST FIGHTER</h1>
+      <p id="fatal-message"></p>
+      <button type="button" id="fatal-reload">↻</button>
+    </div>
+    <noscript>LAST FIGHTER precisa de JavaScript para rodar.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

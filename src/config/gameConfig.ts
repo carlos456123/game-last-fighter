@@ -21,7 +21,7 @@ export const DEBUG_AVAILABLE = import.meta.env.DEV;
 export const E2E_HOOK = import.meta.env.VITE_E2E === 'true';
 
 export const SAVE_KEY = 'last-fighter-save';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export const MATCH = {
   roundsToWin: 2,
@@ -143,6 +143,9 @@ export const SCENES = {
   defeat: 'DefeatScene',
   settings: 'SettingsScene',
   credits: 'CreditsScene',
+  tournament: 'TournamentScene',
+  progression: 'ProgressionScene',
+  dialog: 'DialogScene',
 } as const;
 export type SceneKey = (typeof SCENES)[keyof typeof SCENES];
 

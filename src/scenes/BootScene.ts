@@ -34,6 +34,10 @@ export class BootScene extends Phaser.Scene {
   private createServices(): Services {
     const save = new SaveManager(browserStorage());
     save.load();
+    const progression = new ProgressionManager(FIGHTERS, ARENAS);
+    // Rules met outside a match (e.g. after a save migration or a rule change) unlock right away.
+    const settled = progression.settle(save.data);
+    if (settled.unlocked.length > 0 || settled.achievements.length > 0) save.persist();
     const settings = new SettingsManager(save);
     const i18n = new LocalizationManager(settings.settings.language);
     const audio = new AudioManager(settings.settings);
@@ -61,7 +65,7 @@ export class BootScene extends Phaser.Scene {
       keyboard,
       touch,
       input,
-      progression: new ProgressionManager(FIGHTERS, ARENAS),
+      progression,
       assets: new AssetManager(),
     };
   }

@@ -18,19 +18,22 @@
     "audioHint": "Clique ou pressione uma tecla para ativar o som"
   },
   "menu": {
-    "play": "JOGAR",
-    "continue": "CONTINUAR ARENA",
+    "play": "ARCADE",
+    "continue": "CONTINUAR ARCADE",
     "characters": "PERSONAGENS",
     "howToPlay": "COMO JOGAR",
     "settings": "CONFIGURAÇÕES",
     "credits": "CRÉDITOS",
-    "record": "{wins} vitórias · {cleared} arenas conquistadas"
+    "record": "{wins} vitórias · {cleared} arenas conquistadas",
+    "tournament": "TORNEIO",
+    "tournamentContinue": "CONTINUAR TORNEIO",
+    "progression": "PROGRESSÃO"
   },
   "select": {
     "title": "ESCOLHA SEU LUTADOR",
     "browseTitle": "LUTADORES",
     "fight": "LUTAR",
-    "locked": "🔒 BLOQUEADO",
+    "locked": "BLOQUEADO",
     "unlockWins": "Vença {count} batalhas para desbloquear ({current}/{count})",
     "archetype": "Arquétipo",
     "mainAttribute": "Atributo principal",
@@ -43,7 +46,15 @@
     "nextOpponent": "Próximo oponente: {name}",
     "health": "Vida {value}",
     "cost": "{cost} energia",
-    "cooldown": "{seconds}s recarga"
+    "cooldown": "{seconds}s recarga",
+    "tournamentTitle": "TORNEIO — ESCOLHA SEU LUTADOR",
+    "enterTournament": "INSCREVER",
+    "standardized": "Torneio: atributos padronizados para todos (especializações não se aplicam).",
+    "standardizedShort": "Atributos padronizados",
+    "mastery": "Domínio: {level}",
+    "masteryWithSpec": "Domínio: {level} · Especialização: {spec}",
+    "lockedHint": "Personagens bloqueados podem aparecer como adversários, mas só podem ser escolhidos depois de desbloqueados.",
+    "healthCost": "custa {cost} de vida"
   },
   "archetypes": {
     "balanced": "Equilibrado",
@@ -53,7 +64,7 @@
     "zoner": "Zoner",
     "technical": "Técnico",
     "control": "Controle",
-    "combo": "Combo",
+    "combo": "Versátil",
     "brute": "Força bruta",
     "defense": "Defensivo"
   },
@@ -102,7 +113,8 @@
     "danger": "PERIGO",
     "training": "MODO TREINO",
     "you": "VOCÊ",
-    "cpu": "CPU"
+    "cpu": "CPU",
+    "counter": "CONTRA-ATAQUE!"
   },
   "pause": {
     "title": "PAUSADO",
@@ -121,13 +133,20 @@
     "unlocked": "NOVO LUTADOR DESBLOQUEADO: {name}",
     "champion": "CAMPEÃO DA ÚLTIMA ARENA",
     "championText": "Você sobreviveu a todas as etapas. Novos desafios aguardam.",
-    "rewards": "RECOMPENSAS"
+    "rewards": "RECOMPENSAS",
+    "tournamentChampion": "CAMPEÃO DA ÚLTIMA ARENA",
+    "continueTournament": "CONTINUAR TORNEIO",
+    "epilogue": "CONTINUAR",
+    "masteryUp": "{fighter} alcançou o Domínio {level}!",
+    "achievement": "CONQUISTA: {name}"
   },
   "defeat": {
     "title": "DERROTA",
     "retry": "TENTAR NOVAMENTE",
     "menu": "VOLTAR AO MENU",
-    "hint": "Dica: {tip}"
+    "hint": "Dica: {tip}",
+    "tournamentOver": "Fim da linha nesta edição. Suas recompensas foram mantidas.",
+    "viewBracket": "VER CHAVE"
   },
   "tips": {
     "block": "Segure ESPAÇO para defender. Agache para bloquear golpes baixos.",
@@ -151,7 +170,11 @@
     "combo": "Combo de 5+ golpes",
     "fast": "Vitória rápida",
     "ladder": "Arena conquistada",
-    "effort": "Experiência de combate"
+    "effort": "Experiência de combate",
+    "shadow": "Reflexo derrotado",
+    "flawless": "Sem perder rodada",
+    "tournamentRound": "Etapa do torneio",
+    "tournamentChampion": "Campeão do torneio"
   },
   "settings": {
     "title": "CONFIGURAÇÕES",
@@ -276,7 +299,9 @@
       "personality": "Disciplinado, calmo, carrega culpa e esperança na mesma medida.",
       "origin": "Vael, a cidade das muralhas rubras",
       "style": "Artes marciais da guarda de Vael com brasas canalizadas nos punhos.",
-      "weakness": "Não tem nenhuma vantagem extrema: depende de decisões certas."
+      "weakness": "Não tem nenhuma vantagem extrema: depende de decisões certas.",
+      "quote": "Eu prometi proteger quem restou. Não vou cair aqui.",
+      "winQuote": "Mais um passo cumprido. O juramento continua."
     },
     "bronn": {
       "name": "BRONN",
@@ -285,7 +310,9 @@
       "personality": "Paciente, bem-humorado e imóvel como pedra quando decide algo.",
       "origin": "Forjas Profundas, sob as montanhas de cinza",
       "style": "Golpes pesados com manoplas de ferro e armadura que absorve impactos.",
-      "weakness": "Lento para andar e esquivar. Sofre contra quem se mantém em movimento."
+      "weakness": "Lento para andar e esquivar. Sofre contra quem se mantém em movimento.",
+      "quote": "Pode bater. A montanha não se mexe.",
+      "winQuote": "Hah! Volte quando tiver ombros para isso."
     },
     "nyx": {
       "name": "NYX",
@@ -294,23 +321,120 @@
       "personality": "Silenciosa, impaciente e implacável com quem hesita.",
       "origin": "Desconhecida",
       "style": "Lâminas gêmeas, teleporte curto e combos longos em velocidade extrema.",
-      "weakness": "Pouca vida e pouca defesa: cada erro custa caro."
+      "weakness": "Pouca vida e pouca defesa: cada erro custa caro.",
+      "quote": "...Você está no meu caminho.",
+      "winQuote": "Lento demais."
     },
     "shadow": {
       "name": "REFLEXO",
-      "title": "A Sombra de Si Mesmo"
+      "title": "A Sombra de Si Mesmo",
+      "quote": "Eu sou cada erro que você cometeu até chegar aqui.",
+      "winQuote": "Você nunca venceu ninguém. Só adiou este encontro."
+    },
+    "ayame": {
+      "name": "AYAME",
+      "title": "Lâmina do Vento",
+      "bio": "Última aluna de uma escola de espadachins apagada dos registros. Ayame entra na Arena para descobrir quem traiu seu clã e por que o nome dele aparece na lista do Conselho.",
+      "personality": "Calma, precisa e orgulhosa. Fala pouco e nunca desperdiça um movimento.",
+      "origin": "Vale dos Bambus Partidos",
+      "style": "Katana, esquivas perfeitas e cortes que punem qualquer abertura.",
+      "weakness": "Golpes comprometidos: errar o iaido deixa Ayame exposta por muito tempo.",
+      "quote": "Um único corte basta. O resto é distração.",
+      "winQuote": "Você se moveu antes de pensar. Eu pensei antes de me mover."
+    },
+    "valkyrie": {
+      "name": "VALQUÍRIA",
+      "title": "A Campeã Alada",
+      "bio": "Campeã da primeira Última Arena, desaparecida há dez anos. Valquíria só aparece para quem conquista o torneio e tem respostas sobre o que o Conselho realmente procura.",
+      "personality": "Nobre, direta e exigente. Respeita apenas quem luta até o fim.",
+      "origin": "Cidadela de Aurum, acima das nuvens",
+      "style": "Lança de longo alcance, escudo, dardo sagrado e mergulho celeste.",
+      "weakness": "Golpes longos e lentos: quem entra na guarda dela tem vantagem.",
+      "quote": "Mostre-me se você merece a coroa que carrega.",
+      "winQuote": "A Arena lembra de todos os campeões. Hoje, lembrará de mim de novo."
+    },
+    "han": {
+      "name": "MESTRE HAN",
+      "title": "A Montanha Paciente",
+      "bio": "Ex-instrutor dos guardas do Conselho. Han abandonou o posto quando entendeu o que o torneio realmente cultiva, e agora luta para impedir que o Reflexo desperte.",
+      "personality": "Sereno, irônico e paciente. Ensina até enquanto derrota alguém.",
+      "origin": "Mosteiro da Névoa Alta",
+      "style": "Defesa sólida, posturas de contra-ataque e punições precisas.",
+      "weakness": "Pouca pressão ofensiva: sofre contra oponentes que não atacam.",
+      "quote": "Ataque quando quiser. Eu responderei quando for a hora.",
+      "winQuote": "A pressa é a primeira derrota. A segunda fui eu."
+    },
+    "r0n": {
+      "name": "R-0N",
+      "title": "Unidade de Contenção",
+      "bio": "Protótipo de segurança construído pelo Conselho para conter lutadores rebeldes. Um erro de protocolo deu a R-0N curiosidade, e agora ele quer saber o que existe além das ordens.",
+      "personality": "Literal, metódico e estranhamente gentil. Calcula tudo, inclusive a própria dúvida.",
+      "origin": "Fábrica Subterrânea do Conselho",
+      "style": "Disparos de plasma, propulsores com armadura e controle de distância.",
+      "weakness": "Pesado e lento: recuperações longas após os golpes grandes.",
+      "quote": "Probabilidade de vitória recalculada. Iniciando combate.",
+      "winQuote": "Conflito encerrado. Registro: você foi um adversário eficiente."
+    },
+    "vesper": {
+      "name": "VESPER",
+      "title": "A Tecelã de Órbitas",
+      "bio": "Astrônoma que aprendeu a dobrar a gravidade estudando a fenda no céu. Vesper acredita que o Reflexo é uma estrela caída, e quer vê-lo antes que o Conselho o controle.",
+      "personality": "Curiosa, distante e um pouco arrogante. Trata cada luta como um experimento.",
+      "origin": "Observatório de Lyra",
+      "style": "Orbes gravitacionais que ficam no campo, lanças de luz e cajado.",
+      "weakness": "Frágil de perto: quando o oponente encosta, ela tem poucas saídas.",
+      "quote": "Fique onde está. A gravidade já decidiu por você.",
+      "winQuote": "Previsível, como uma órbita. Obrigada pelos dados."
+    },
+    "dante": {
+      "name": "DANTE",
+      "title": "A Brasa Insaciável",
+      "bio": "Campeão de rinhas clandestinas que trocou parte da própria vida por poder. Dante enfrentou o Reflexo uma vez e perdeu. Desde então, só pensa na revanche.",
+      "personality": "Explosivo, provocador e leal a quem o vence de forma justa.",
+      "origin": "Fornalhas de Cinza Baixa",
+      "style": "Pressão constante, golpes devastadores e técnicas que consomem a própria vida.",
+      "weakness": "Recuperações longas e custo de vida: errar sai muito caro.",
+      "quote": "Vem. Eu quero sentir esse golpe.",
+      "winQuote": "Doeu? Ótimo. Agora você sabe como eu vivo."
     }
   },
   "moves": {
-    "kael_jab": { "name": "Golpe Direto", "desc": "Soco rápido. Encadeia no Cruzado." },
-    "kael_cross": { "name": "Cruzado", "desc": "Segundo golpe da sequência." },
-    "kael_roundhouse": { "name": "Chute Circular", "desc": "Finaliza a sequência e empurra." },
-    "kael_heavy": { "name": "Punho de Vael", "desc": "Soco pesado que atordoa." },
-    "kael_low_jab": { "name": "Soco Baixo", "desc": "Golpe baixo rápido." },
-    "kael_sweep": { "name": "Rasteira", "desc": "Golpe baixo que derruba." },
-    "kael_air_kick": { "name": "Chute Aéreo", "desc": "Golpe aéreo rápido." },
-    "kael_air_heavy": { "name": "Queda Rubra", "desc": "Golpe aéreo pesado." },
-    "kael_ember": { "name": "Lâmina de Brasa", "desc": "Lança uma onda de fogo à frente." },
+    "kael_jab": {
+      "name": "Golpe Direto",
+      "desc": "Soco rápido. Encadeia no Cruzado."
+    },
+    "kael_cross": {
+      "name": "Cruzado",
+      "desc": "Segundo golpe da sequência."
+    },
+    "kael_roundhouse": {
+      "name": "Chute Circular",
+      "desc": "Finaliza a sequência e empurra."
+    },
+    "kael_heavy": {
+      "name": "Punho de Vael",
+      "desc": "Soco pesado que atordoa."
+    },
+    "kael_low_jab": {
+      "name": "Soco Baixo",
+      "desc": "Golpe baixo rápido."
+    },
+    "kael_sweep": {
+      "name": "Rasteira",
+      "desc": "Golpe baixo que derruba."
+    },
+    "kael_air_kick": {
+      "name": "Chute Aéreo",
+      "desc": "Golpe aéreo rápido."
+    },
+    "kael_air_heavy": {
+      "name": "Queda Rubra",
+      "desc": "Golpe aéreo pesado."
+    },
+    "kael_ember": {
+      "name": "Lâmina de Brasa",
+      "desc": "Lança uma onda de fogo à frente."
+    },
     "kael_rising": {
       "name": "Ascensão Rubra",
       "desc": "Gancho ascendente invulnerável no início. Antiaéreo."
@@ -319,34 +443,590 @@
       "name": "Juramento Final",
       "desc": "Investida que prende o oponente numa sequência de golpes flamejantes."
     },
-    "bronn_jab": { "name": "Punho de Ferro", "desc": "Soco direto pesado." },
-    "bronn_hammer": { "name": "Martelo", "desc": "Golpe de cima para baixo que empurra." },
-    "bronn_smash": { "name": "Esmagar", "desc": "Golpe duplo com armadura: aguenta um golpe sem parar." },
-    "bronn_low": { "name": "Soco de Mina", "desc": "Golpe baixo." },
-    "bronn_stomp": { "name": "Pisão", "desc": "Golpe baixo que derruba." },
-    "bronn_air_elbow": { "name": "Cotovelada Aérea", "desc": "Golpe aéreo." },
-    "bronn_air_crush": { "name": "Queda de Rocha", "desc": "Golpe aéreo devastador." },
-    "bronn_tremor": { "name": "Tremor", "desc": "Onda pelo chão. Bloqueie agachado ou pule." },
-    "bronn_charge": { "name": "Investida de Ferro", "desc": "Ombrada com armadura de 2 golpes." },
+    "bronn_jab": {
+      "name": "Punho de Ferro",
+      "desc": "Soco direto pesado."
+    },
+    "bronn_hammer": {
+      "name": "Martelo",
+      "desc": "Golpe de cima para baixo que empurra."
+    },
+    "bronn_smash": {
+      "name": "Esmagar",
+      "desc": "Golpe duplo com armadura: aguenta um golpe sem parar."
+    },
+    "bronn_low": {
+      "name": "Soco de Mina",
+      "desc": "Golpe baixo."
+    },
+    "bronn_stomp": {
+      "name": "Pisão",
+      "desc": "Golpe baixo que derruba."
+    },
+    "bronn_air_elbow": {
+      "name": "Cotovelada Aérea",
+      "desc": "Golpe aéreo."
+    },
+    "bronn_air_crush": {
+      "name": "Queda de Rocha",
+      "desc": "Golpe aéreo devastador."
+    },
+    "bronn_tremor": {
+      "name": "Tremor",
+      "desc": "Onda pelo chão. Bloqueie agachado ou pule."
+    },
+    "bronn_charge": {
+      "name": "Investida de Ferro",
+      "desc": "Ombrada com armadura de 2 golpes."
+    },
     "bronn_collapse": {
       "name": "Colapso Tectônico",
       "desc": "Terremoto que atinge todos no chão. Pule no momento certo para evitar."
     },
-    "nyx_slash1": { "name": "Corte Veloz", "desc": "Primeiro de quatro cortes." },
-    "nyx_slash2": { "name": "Corte Duplo", "desc": "Segundo corte." },
-    "nyx_slash3": { "name": "Corte Triplo", "desc": "Terceiro corte." },
-    "nyx_spin": { "name": "Giro Lunar", "desc": "Giro com dois golpes que fecha a sequência." },
-    "nyx_rising_cross": { "name": "Cruz Ascendente", "desc": "Lança o oponente para o alto." },
-    "nyx_low_slash": { "name": "Corte Rasteiro", "desc": "Golpe baixo rápido." },
-    "nyx_slide": { "name": "Deslize", "desc": "Desliza pelo chão e derruba." },
-    "nyx_air_slash": { "name": "Corte Aéreo", "desc": "Golpe aéreo rápido." },
-    "nyx_dive": { "name": "Mergulho", "desc": "Mergulha em diagonal com as lâminas." },
-    "nyx_kunai": { "name": "Leque de Lâminas", "desc": "Arremessa três kunais em leque." },
-    "nyx_blink": { "name": "Passo Fantasma", "desc": "Teleporta para as costas do oponente e golpeia." },
-    "nyx_eclipse": { "name": "Eclipse", "desc": "Some nas sombras e retalha o oponente de todos os lados." }
+    "nyx_slash1": {
+      "name": "Corte Veloz",
+      "desc": "Primeiro de quatro cortes."
+    },
+    "nyx_slash2": {
+      "name": "Corte Duplo",
+      "desc": "Segundo corte."
+    },
+    "nyx_slash3": {
+      "name": "Corte Triplo",
+      "desc": "Terceiro corte."
+    },
+    "nyx_spin": {
+      "name": "Giro Lunar",
+      "desc": "Giro com dois golpes que fecha a sequência."
+    },
+    "nyx_rising_cross": {
+      "name": "Cruz Ascendente",
+      "desc": "Lança o oponente para o alto."
+    },
+    "nyx_low_slash": {
+      "name": "Corte Rasteiro",
+      "desc": "Golpe baixo rápido."
+    },
+    "nyx_slide": {
+      "name": "Deslize",
+      "desc": "Desliza pelo chão e derruba."
+    },
+    "nyx_air_slash": {
+      "name": "Corte Aéreo",
+      "desc": "Golpe aéreo rápido."
+    },
+    "nyx_dive": {
+      "name": "Mergulho",
+      "desc": "Mergulha em diagonal com as lâminas."
+    },
+    "nyx_kunai": {
+      "name": "Leque de Lâminas",
+      "desc": "Arremessa três kunais em leque."
+    },
+    "nyx_blink": {
+      "name": "Passo Fantasma",
+      "desc": "Teleporta para as costas do oponente e golpeia."
+    },
+    "nyx_eclipse": {
+      "name": "Eclipse",
+      "desc": "Some nas sombras e retalha o oponente de todos os lados."
+    },
+    "ayame_strike": {
+      "name": "Corte Rápido",
+      "desc": "Golpe veloz. Encadeia na joelhada."
+    },
+    "ayame_rising_knee": {
+      "name": "Joelho Ascendente",
+      "desc": "Segundo golpe da sequência."
+    },
+    "ayame_katana_slash": {
+      "name": "Corte de Katana",
+      "desc": "Corte longo que encerra a sequência."
+    },
+    "ayame_iai": {
+      "name": "Iaido",
+      "desc": "Saque instantâneo de longo alcance. Punitivo, mas muito arriscado se errar."
+    },
+    "ayame_low_cut": {
+      "name": "Corte Baixo",
+      "desc": "Golpe baixo rápido."
+    },
+    "ayame_sweep": {
+      "name": "Rasteira do Vento",
+      "desc": "Golpe baixo que derruba."
+    },
+    "ayame_air_cut": {
+      "name": "Corte Aéreo",
+      "desc": "Golpe aéreo rápido."
+    },
+    "ayame_air_drop": {
+      "name": "Queda da Folha",
+      "desc": "Mergulho em diagonal."
+    },
+    "ayame_wind_step": {
+      "name": "Passo do Vento",
+      "desc": "Recua invulnerável e avança cortando."
+    },
+    "ayame_crescent": {
+      "name": "Lua Crescente",
+      "desc": "Salto giratório que golpeia de cima (vence defesa baixa)."
+    },
+    "ayame_petals": {
+      "name": "Mil Pétalas",
+      "desc": "Atravessa o oponente e o prende numa tempestade de cortes."
+    },
+    "valk_jab": {
+      "name": "Punho de Aço",
+      "desc": "Golpe rápido. Encadeia na estocada."
+    },
+    "valk_thrust": {
+      "name": "Estocada",
+      "desc": "Estocada de lança de longo alcance."
+    },
+    "valk_arc": {
+      "name": "Arco da Lança",
+      "desc": "Varredura ampla que cobre a frente e o alto."
+    },
+    "valk_low_poke": {
+      "name": "Estocada Baixa",
+      "desc": "Golpe baixo de longo alcance."
+    },
+    "valk_sweep": {
+      "name": "Rasteira Alada",
+      "desc": "Golpe baixo que derruba."
+    },
+    "valk_air_kick": {
+      "name": "Chute Aéreo",
+      "desc": "Golpe aéreo."
+    },
+    "valk_air_thrust": {
+      "name": "Lança Descendente",
+      "desc": "Estocada aérea de longo alcance."
+    },
+    "valk_javelin": {
+      "name": "Dardo Celeste",
+      "desc": "Arremessa uma lança sagrada em linha reta."
+    },
+    "valk_aegis": {
+      "name": "Égide",
+      "desc": "Investida com escudo. Aguenta um golpe sem parar."
+    },
+    "valk_judgement": {
+      "name": "Julgamento Celeste",
+      "desc": "Salta e mergulha com a lança, prendendo o oponente."
+    },
+    "han_palm": {
+      "name": "Palma Firme",
+      "desc": "Golpe rápido. Encadeia na palma dupla."
+    },
+    "han_double_palm": {
+      "name": "Palma Dupla",
+      "desc": "Dois golpes que encerram a sequência."
+    },
+    "han_heavy_palm": {
+      "name": "Palma da Montanha",
+      "desc": "Golpe pesado que atordoa muito."
+    },
+    "han_low_palm": {
+      "name": "Palma Baixa",
+      "desc": "Golpe baixo."
+    },
+    "han_sweep": {
+      "name": "Raiz Partida",
+      "desc": "Golpe baixo que derruba."
+    },
+    "han_air_kick": {
+      "name": "Chute da Garça",
+      "desc": "Golpe aéreo."
+    },
+    "han_air_palm": {
+      "name": "Palma Descendente",
+      "desc": "Golpe aéreo pesado."
+    },
+    "han_still_water": {
+      "name": "Água Parada",
+      "desc": "Postura de contra-ataque: se for atacado, absorve e revida. Arriscado se ninguém atacar."
+    },
+    "han_tiger_step": {
+      "name": "Passo do Tigre",
+      "desc": "Avanço veloz para punir erros do oponente."
+    },
+    "han_inverted_sky": {
+      "name": "Céu Invertido",
+      "desc": "Contra-ataque supremo: só funciona lendo o ataque do oponente."
+    },
+    "ron_jab": {
+      "name": "Pistão",
+      "desc": "Soco mecânico. Encadeia no pistão duplo."
+    },
+    "ron_piston": {
+      "name": "Pistão Duplo",
+      "desc": "Segundo golpe que empurra."
+    },
+    "ron_hammer": {
+      "name": "Martelo Hidráulico",
+      "desc": "Golpe pesado com armadura de um golpe."
+    },
+    "ron_low_jab": {
+      "name": "Pistão Baixo",
+      "desc": "Golpe baixo."
+    },
+    "ron_sweep": {
+      "name": "Varredura de Aço",
+      "desc": "Golpe baixo que derruba."
+    },
+    "ron_air_elbow": {
+      "name": "Cotovelo Aéreo",
+      "desc": "Golpe aéreo."
+    },
+    "ron_air_stomp": {
+      "name": "Pisão Orbital",
+      "desc": "Golpe aéreo pesado."
+    },
+    "ron_plasma": {
+      "name": "Disparo de Plasma",
+      "desc": "Projétil barato e lento para controlar distância."
+    },
+    "ron_booster": {
+      "name": "Propulsores",
+      "desc": "Decola com armadura. Antiaéreo."
+    },
+    "ron_overload": {
+      "name": "Sobrecarga Total",
+      "desc": "Laser que atravessa a arena. Pule ou esquive no momento certo."
+    },
+    "vesper_staff": {
+      "name": "Golpe de Cajado",
+      "desc": "Golpe de longo alcance. Encadeia."
+    },
+    "vesper_staff2": {
+      "name": "Cajado Duplo",
+      "desc": "Segundo golpe que empurra."
+    },
+    "vesper_spin": {
+      "name": "Giro Orbital",
+      "desc": "Giro do cajado com dois golpes à frente e atrás."
+    },
+    "vesper_low_staff": {
+      "name": "Cajado Baixo",
+      "desc": "Golpe baixo de longo alcance."
+    },
+    "vesper_sweep": {
+      "name": "Rasteira Estelar",
+      "desc": "Golpe baixo que derruba."
+    },
+    "vesper_air_staff": {
+      "name": "Cajado Aéreo",
+      "desc": "Golpe aéreo."
+    },
+    "vesper_air_burst": {
+      "name": "Explosão Aérea",
+      "desc": "Golpe aéreo pesado."
+    },
+    "vesper_orb": {
+      "name": "Orbe Gravitacional",
+      "desc": "Orbe lento que fica no campo e golpeia até 3 vezes."
+    },
+    "vesper_lance": {
+      "name": "Lança de Luz",
+      "desc": "Projétil rasteiro rápido. Bloqueie agachado ou pule."
+    },
+    "vesper_constellation": {
+      "name": "Constelação",
+      "desc": "Lança cinco orbes em leque que controlam a arena."
+    },
+    "dante_jab": {
+      "name": "Soco Ardente",
+      "desc": "Golpe rápido. Encadeia."
+    },
+    "dante_hook": {
+      "name": "Gancho",
+      "desc": "Segundo golpe da sequência."
+    },
+    "dante_knee": {
+      "name": "Joelhada",
+      "desc": "Encerra a sequência e empurra."
+    },
+    "dante_haymaker": {
+      "name": "Golpe de Fornalha",
+      "desc": "Soco devastador. Recuperação longa."
+    },
+    "dante_low_jab": {
+      "name": "Soco Baixo",
+      "desc": "Golpe baixo."
+    },
+    "dante_sweep": {
+      "name": "Rasteira Brutal",
+      "desc": "Golpe baixo que derruba."
+    },
+    "dante_air_knee": {
+      "name": "Joelhada Aérea",
+      "desc": "Golpe aéreo."
+    },
+    "dante_air_axe": {
+      "name": "Machado Aéreo",
+      "desc": "Golpe aéreo pesado."
+    },
+    "dante_rush": {
+      "name": "Investida Infernal",
+      "desc": "Avanço explosivo. Muito punível se for bloqueado."
+    },
+    "dante_pact": {
+      "name": "Pacto de Sangue",
+      "desc": "Custa vida. Golpe de cima devastador com armadura."
+    },
+    "dante_inferno": {
+      "name": "Inferno",
+      "desc": "Custa vida. Investida que prende o oponente em chamas."
+    }
   },
   "arenas": {
-    "colosseum": { "name": "COLISEU PARTIDO", "desc": "Ruínas ao entardecer onde a Arena começou." },
-    "neon_dock": { "name": "DOCA NEON", "desc": "Um terraço sob a chuva de uma cidade que não dorme." }
+    "colosseum": {
+      "name": "COLISEU PARTIDO",
+      "desc": "Ruínas ao entardecer onde a Arena começou."
+    },
+    "neon_dock": {
+      "name": "DOCA NEON",
+      "desc": "Um terraço sob a chuva de uma cidade que não dorme."
+    },
+    "district": {
+      "name": "DISTRITO VERTICAL",
+      "desc": "Fábricas e letreiros empilhados sob uma chuva que nunca para."
+    },
+    "sanctuary": {
+      "name": "SANTUÁRIO DAS CINZAS",
+      "desc": "Ruínas antigas onde as finais da Arena são decididas."
+    }
+  },
+  "unlock": {
+    "wins": "Vença {count} lutas no Arcade",
+    "perfectDodges": "Faça {count} esquivas perfeitas em lutas válidas",
+    "flawlessWins": "Vença {count} partidas sem perder nenhuma rodada",
+    "playerLevel": "Alcance o nível {level} de jogador",
+    "arcadeStreak": "Vença {count} lutas seguidas no Arcade",
+    "defeatShadow": "Derrote o Reflexo no fim do Arcade",
+    "tournamentWin": "Conquiste o Torneio da Última Arena"
+  },
+  "mastery": {
+    "level1": "I — Aprendiz",
+    "level2": "II — Experiente",
+    "level3": "III — Mestre"
+  },
+  "progression": {
+    "title": "PROGRESSÃO",
+    "summary": "RESUMO",
+    "fighters": "LUTADORES",
+    "achievements": "CONQUISTAS",
+    "codex": "CODEX DE GOLPES",
+    "xpBar": "{current} / {needed} EXP para o próximo nível · total {total}",
+    "recent": "RECOMPENSAS RECENTES",
+    "noRewards": "Vença ou conclua lutas no Arcade ou no Torneio para ganhar recompensas.",
+    "titleLabel": "Título exibido",
+    "noTitle": "SEM TÍTULO",
+    "locked": "BLOQUEADO",
+    "needMastery": "REQUER DOMÍNIO II",
+    "specChosen": "Especialização escolhida: {spec}",
+    "masteryNext": "Domínio: {xp}/{next} EXP para o próximo nível. Escolha uma especialização no Domínio II; no III ela fica mais forte.",
+    "masteryMax": "Domínio máximo alcançado: especialização no nível 2.",
+    "stats": {
+      "wins": "Vitórias / derrotas",
+      "arcadeStreak": "Sequência no Arcade (melhor)",
+      "flawless": "Vitórias sem perder rodada",
+      "perfectDodges": "Esquivas perfeitas",
+      "counters": "Contra-ataques",
+      "bestCombo": "Maior combo",
+      "shadow": "Reflexos derrotados",
+      "tournaments": "Torneios vencidos / disputados",
+      "ladders": "Arcades concluídos",
+      "time": "Tempo de luta"
+    }
+  },
+  "tournament": {
+    "title": "TORNEIO DA ÚLTIMA ARENA",
+    "subtitle": "Oito lutadores. Três vitórias. Um campeão.",
+    "story": "O Conselho da Arena convoca os melhores combatentes para o torneio que escolhe o maior lutador vivo. Mas os veteranos sussurram que cada edição serve a outro propósito: encontrar quem seja forte o bastante para despertar o Reflexo.",
+    "rulesTitle": "REGRAS",
+    "rules": "• Chave eliminatória com 8 lutadores únicos: quartas de final, semifinais e final.\n• Atributos padronizados: vence quem joga melhor, não quem treinou mais.\n• Uma derrota encerra a edição, mas XP, conquistas e desbloqueios conquistados ficam.\n• O progresso da chave é salvo após cada luta.\n• Primeiro título: Valquíria se junta ao elenco.",
+    "record": "Títulos: {titles} · Edições disputadas: {editions}",
+    "lastChampion": "Última edição: você foi o campeão!",
+    "lastEliminated": "Última edição: campeão {champion}",
+    "newEdition": "NOVA EDIÇÃO",
+    "nextMatch": "PRÓXIMA LUTA",
+    "fight": "LUTAR",
+    "abandon": "ABANDONAR EDIÇÃO",
+    "confirmAbandon": "CONFIRMAR (SEM RECOMPENSAS)",
+    "champion": "CAMPEÃO",
+    "round": {
+      "quarter": "QUARTAS DE FINAL",
+      "semi": "SEMIFINAL",
+      "final": "FINAL"
+    }
+  },
+  "dialog": {
+    "skip": "PULAR",
+    "advance": "Clique, toque ou ENTER para continuar"
+  },
+  "story": {
+    "council": "CONSELHO DA ARENA",
+    "intro1": "Bem-vindos à Última Arena. Desde que o céu se partiu, só os fortes sobrevivem, e só um é lembrado.",
+    "intro2": "Oito lutadores. Três combates. O vencedor recebe a coroa da Arena e tudo o que ela promete.",
+    "intro3": "Não confie no Conselho. Eles não procuram um campeão. Procuram uma chave.",
+    "round": {
+      "quarter": "Quartas de final! Seu adversário: {opponent}. Mostre por que merece estar aqui.",
+      "semi": "Semifinal. {opponent} chegou até aqui sem piedade. A Arena observa.",
+      "final": "A final no Santuário das Cinzas! Apenas você e {opponent} entre a glória e o esquecimento."
+    },
+    "finalWarning": "As cinzas tremem. Algo desperta debaixo do Santuário. Lutem.",
+    "champion1": "{fighter} é o campeão da Última Arena! O Conselho reconhece... e registra.",
+    "champion2": "Então você é o novo campeão. Eu estive no seu lugar há dez anos, e a vitória foi só o começo.",
+    "champion3": "O Reflexo está acordando. Quando ele vier, você vai precisar de aliados. Conte comigo.",
+    "shadowTitle": "O REFLEXO",
+    "shadow1": "Você chegou longe. Longe o bastante para me acordar.",
+    "shadow2": "Quem é você?",
+    "arcadeEnd1": "O Reflexo se desfaz em cinzas, mas a voz dele continua ecoando. Ele aprendeu com você.",
+    "arcadeEnd2": "Interessante. O Conselho tomou nota. O Torneio da Última Arena aguarda."
+  },
+  "log": {
+    "match": "Luta concluída: +{xp} EXP",
+    "unlock": "Novo lutador: {fighter}",
+    "achievement": "Conquista: {id}",
+    "mastery": "Domínio {level}: {fighter}"
+  },
+  "achievements": {
+    "first_win": {
+      "name": "Primeira Vitória",
+      "desc": "Vença sua primeira luta válida."
+    },
+    "win_streak": {
+      "name": "Sequência de Vitórias",
+      "desc": "Vença 3 lutas seguidas no Arcade."
+    },
+    "perfect_dodge": {
+      "name": "Esquiva Perfeita",
+      "desc": "Faça 10 esquivas perfeitas em lutas válidas."
+    },
+    "combo_master": {
+      "name": "Mestre dos Combos",
+      "desc": "Acerte um combo de 8 golpes."
+    },
+    "flawless": {
+      "name": "Sem Concessões",
+      "desc": "Vença 5 partidas sem perder nenhuma rodada."
+    },
+    "shadow_hunter": {
+      "name": "Caçador de Reflexos",
+      "desc": "Derrote o Reflexo no Arcade."
+    },
+    "arena_champion": {
+      "name": "Campeão da Arena",
+      "desc": "Conquiste o Torneio da Última Arena."
+    },
+    "absolute_mastery": {
+      "name": "Domínio Absoluto",
+      "desc": "Leve um lutador ao Domínio III."
+    },
+    "collector": {
+      "name": "Colecionador",
+      "desc": "Desbloqueie os nove lutadores."
+    },
+    "versatile": {
+      "name": "Versátil",
+      "desc": "Vença lutas com 3 lutadores diferentes."
+    },
+    "guardian": {
+      "name": "Guardião",
+      "desc": "Bloqueie 50 ataques em lutas válidas."
+    },
+    "arsenal": {
+      "name": "Arsenal Completo",
+      "desc": "Use habilidades e ultimates 25 vezes."
+    },
+    "traveler": {
+      "name": "Viajante",
+      "desc": "Vença em todas as 4 arenas."
+    }
+  },
+  "titles": {
+    "untouchable": "O Intocável",
+    "combo_artist": "Artista dos Combos",
+    "flawless": "O Impecável",
+    "shadow_hunter": "Caçador de Sombras",
+    "champion": "Campeão da Arena",
+    "master": "Mestre de Armas",
+    "collector": "Guardião do Elenco"
+  },
+  "specs": {
+    "kael_ember": {
+      "name": "Brasa Afiada",
+      "desc": "Lâmina de Brasa recarrega mais rápido e custa menos energia."
+    },
+    "kael_oath_guard": {
+      "name": "Juramento Firme",
+      "desc": "Ascensão Rubra fica invulnerável por mais tempo e recupera mais rápido."
+    },
+    "bronn_living_wall": {
+      "name": "Muralha Viva",
+      "desc": "Esmagar mantém a armadura por mais tempo; no Domínio III a Investida aguenta mais um golpe."
+    },
+    "bronn_forge_rhythm": {
+      "name": "Ritmo de Forja",
+      "desc": "Esmagar e Martelo recuperam mais rápido."
+    },
+    "nyx_swift_shadow": {
+      "name": "Sombra Veloz",
+      "desc": "Corre mais rápido e esquiva com menos espera."
+    },
+    "nyx_cruel_blades": {
+      "name": "Lâminas Cruéis",
+      "desc": "O fim da sequência de cortes causa mais dano."
+    },
+    "ayame_leaf": {
+      "name": "Folha ao Vento",
+      "desc": "Esquiva invulnerável por mais tempo e mais longa."
+    },
+    "ayame_exact_cut": {
+      "name": "Corte Exato",
+      "desc": "Iaido recupera mais rápido e causa mais dano."
+    },
+    "han_mountain": {
+      "name": "Montanha",
+      "desc": "Recebe menos dano de todos os golpes."
+    },
+    "han_reading": {
+      "name": "Leitura",
+      "desc": "Água Parada fica ativa por mais tempo e recarrega mais rápido."
+    },
+    "ron_containment": {
+      "name": "Grade de Contenção",
+      "desc": "Plasma recarrega mais rápido e viaja mais veloz."
+    },
+    "ron_core": {
+      "name": "Núcleo Eficiente",
+      "desc": "Plasma e Propulsores custam menos energia."
+    },
+    "vesper_gravity_field": {
+      "name": "Campo Gravitacional",
+      "desc": "O orbe dura mais; no Domínio III golpeia uma vez a mais."
+    },
+    "vesper_swift_light": {
+      "name": "Luz Veloz",
+      "desc": "Lança de Luz recarrega mais rápido e causa mais dano."
+    },
+    "dante_fury": {
+      "name": "Fúria Contínua",
+      "desc": "Investida recupera mais rápido e a joelhada bate mais forte."
+    },
+    "dante_cold_blood": {
+      "name": "Sangue Frio",
+      "desc": "Pacto e Inferno custam menos vida; no Domínio III o Pacto recupera mais rápido."
+    },
+    "valk_arsenal": {
+      "name": "Arsenal Celeste",
+      "desc": "Anda mais rápido; no Domínio III a estocada sai um quadro antes."
+    },
+    "valk_blessing": {
+      "name": "Bênção",
+      "desc": "Dardo Celeste e Égide recarregam mais rápido."
+    }
   }
 }

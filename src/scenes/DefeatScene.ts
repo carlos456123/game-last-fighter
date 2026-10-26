@@ -48,28 +48,75 @@ export class DefeatScene extends Phaser.Scene {
       t('defeat.hint', { tip: t(tip) }),
       textStyle({ size: TYPE.small, color: TEXT_COLORS.dim, wrap: 420 }),
     );
-    if (result.reward)
+    if (result.reward) {
+      // Losing still teaches: effort XP, mastery and any achievement progress are kept.
       this.add.text(
         470,
         520,
         t('victory.xpGained', { xp: result.reward.xp }),
         textStyle({ font: 'display', size: TYPE.small, color: TEXT_COLORS.gold }),
       );
+      const notes = [
+        ...result.reward.unlocked.map((id) => t('victory.unlocked', { name: t(getFighter(id).nameKey) })),
+        ...result.reward.achievements.map((id) =>
+          t('victory.achievement', { name: t(`achievements.${id}.name`) }),
+        ),
+      ];
+      notes.forEach((n, i) =>
+        this.add.text(
+          470,
+          556 + i * 26,
+          n,
+          textStyle({ size: TYPE.tiny, color: TEXT_COLORS.cyan, wrap: 420 }),
+        ),
+      );
+    }
 
-    const retry = new Button(this, 1060, 320, {
-      id: 'defeat-retry',
-      label: t('defeat.retry'),
-      width: 340,
-      onClick: () => goTo(this, SCENES.battle, result.battle),
-    });
-    const menu = new Button(this, 1060, 400, {
-      id: 'defeat-menu',
-      label: t('defeat.menu'),
-      width: 340,
-      variant: 'secondary',
-      onClick: () => goTo(this, SCENES.menu),
-    });
-    new MenuNavigator(this, [retry, menu], { onBack: () => goTo(this, SCENES.menu) });
+    const buttons: Button[] = [];
+    if (result.battle.mode === 'tournament') {
+      // A loss ends the edition; XP, achievements and unlocks earned so far are kept.
+      this.add
+        .text(
+          1060,
+          250,
+          t('defeat.tournamentOver'),
+          textStyle({
+            font: 'display',
+            size: TYPE.small,
+            color: TEXT_COLORS.danger,
+            align: 'center',
+            wrap: 340,
+          }),
+        )
+        .setOrigin(0.5);
+      buttons.push(
+        new Button(this, 1060, 320, {
+          id: 'defeat-bracket',
+          label: t('defeat.viewBracket'),
+          width: 340,
+          onClick: () => goTo(this, SCENES.tournament),
+        }),
+      );
+    } else {
+      buttons.push(
+        new Button(this, 1060, 320, {
+          id: 'defeat-retry',
+          label: t('defeat.retry'),
+          width: 340,
+          onClick: () => goTo(this, SCENES.battle, result.battle),
+        }),
+      );
+    }
+    buttons.push(
+      new Button(this, 1060, 400, {
+        id: 'defeat-menu',
+        label: t('defeat.menu'),
+        width: 340,
+        variant: 'secondary',
+        onClick: () => goTo(this, SCENES.menu),
+      }),
+    );
+    new MenuNavigator(this, buttons, { onBack: () => goTo(this, SCENES.menu) });
     audio.playMusic('menu');
     fadeIn(this);
   }

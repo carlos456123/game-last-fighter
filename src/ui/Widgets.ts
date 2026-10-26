@@ -36,7 +36,10 @@ abstract class Row extends Phaser.GameObjects.Container implements Focusable {
   }
 
   setFocused(focused: boolean): void {
-    if (focused && !this.focused) getServices(this.scene).audio.play('ui_hover');
+    if (focused && !this.focused) {
+      getServices(this.scene).audio.play('ui_hover');
+      this.emit('focused');
+    }
     this.focused = focused;
     this.drawFrame();
   }
@@ -133,7 +136,8 @@ export class Slider extends Row {
 /** A row cycling through labelled options (also used for on/off toggles). */
 export class Selector<T extends string | boolean> extends Row {
   private readonly valueText: Phaser.GameObjects.Text;
-  private readonly arrows: Phaser.GameObjects.Text;
+  private readonly leftArrow: Phaser.GameObjects.Text;
+  private readonly rightArrow: Phaser.GameObjects.Text;
 
   constructor(
     scene: Phaser.Scene,
@@ -144,18 +148,24 @@ export class Selector<T extends string | boolean> extends Row {
     private readonly options: Array<{ value: T; label: string }>,
     private index: number,
     private readonly onChange: (v: T) => void,
+    height?: number,
   ) {
-    super(scene, x, y, label, id);
+    super(scene, x, y, label, id, height);
+    // Value is right-aligned between two arrows that follow its width, so long labels never overlap them.
     this.valueText = scene.add
-      .text(ROW_W / 2 - 60, 0, '', textStyle({ size: TYPE.body, bold: true, color: TEXT_COLORS.gold }))
+      .text(ROW_W / 2 - 44, 0, '', textStyle({ size: TYPE.body, bold: true, color: TEXT_COLORS.gold }))
+      .setOrigin(1, 0.5);
+    this.rightArrow = scene.add
+      .text(ROW_W / 2 - 22, 0, '▶', textStyle({ size: TYPE.small, color: TEXT_COLORS.dim }))
       .setOrigin(0.5);
-    this.arrows = scene.add
-      .text(ROW_W / 2 - 60, 0, '◀                ▶', textStyle({ size: TYPE.small, color: TEXT_COLORS.dim }))
+    this.leftArrow = scene.add
+      .text(0, 0, '◀', textStyle({ size: TYPE.small, color: TEXT_COLORS.dim }))
       .setOrigin(0.5);
-    this.add([this.arrows, this.valueText]);
-    this.on('pointerup', (p: Phaser.Input.Pointer) =>
-      this.adjust(p.x - this.x < ROW_W / 2 - 60 && p.x - this.x > 0 ? -1 : 1),
-    );
+    this.add([this.leftArrow, this.rightArrow, this.valueText]);
+    this.on('pointerup', (p: Phaser.Input.Pointer) => {
+      const middle = this.valueText.x - this.valueText.width / 2;
+      this.adjust(p.x - this.x < middle && p.x - this.x > this.leftArrow.x - 30 ? -1 : 1);
+    });
     this.render();
   }
 
@@ -180,6 +190,10 @@ export class Selector<T extends string | boolean> extends Row {
     const symbol = opt.value === true ? '● ' : opt.value === false ? '○ ' : '';
     this.valueText.setText(`${symbol}${opt.label}`);
     this.valueText.setColor(opt.value === false ? TEXT_COLORS.dim : TEXT_COLORS.gold);
+    this.leftArrow.setX(this.valueText.x - this.valueText.width - 22);
+    const single = this.options.length < 2;
+    this.leftArrow.setVisible(!single);
+    this.rightArrow.setVisible(!single);
   }
 }
 

@@ -1,4 +1,5 @@
 import type { FighterData } from '@/types';
+import { UNLOCK_RULES } from '@/data/progression/unlocks';
 import { CANCELS, hit, move } from './moveFactory';
 
 /**
@@ -16,7 +17,7 @@ export const BRONN: FighterData = {
   weaknessKey: 'fighters.bronn.weakness',
   archetype: 'tank',
   mainAttribute: 'power',
-  unlock: { type: 'default' },
+  unlock: UNLOCK_RULES.bronn,
   stats: {
     health: 125,
     walkSpeed: 170,

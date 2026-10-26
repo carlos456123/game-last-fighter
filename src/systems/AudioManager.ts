@@ -410,6 +410,49 @@ export class AudioManager {
         T({ freq: 140, dur: 0.15, type: 'square', gain: 0.1, filter: 800, bus: 'ui' });
         T({ freq: 130, dur: 0.15, type: 'square', gain: 0.1, filter: 800, delay: 0.1, bus: 'ui' });
         break;
+      case 'counter':
+        T({ freq: 1400, to: 700, dur: 0.12, type: 'square', gain: 0.12, filter: 3000 });
+        T({ freq: 220, to: 60, dur: 0.35, type: 'sine', gain: 0.45, delay: 0.05 });
+        N({ dur: 0.25, filter: 4000, to: 300, gain: 0.35, delay: 0.05 });
+        break;
+      case 'javelin':
+        N({ dur: 0.3, filter: 1200, to: 4000, type: 'bandpass', gain: 0.2, q: 3 });
+        T({ freq: 500, to: 900, dur: 0.18, type: 'triangle', gain: 0.08 });
+        break;
+      case 'plasma':
+        T({ freq: 180, to: 900, dur: 0.22, type: 'sawtooth', gain: 0.12, filter: 2200 });
+        T({ freq: 90, to: 60, dur: 0.3, type: 'sine', gain: 0.2 });
+        break;
+      case 'orb':
+        T({ freq: 330, to: 495, dur: 0.6, type: 'sine', gain: 0.14, attack: 0.08 });
+        T({ freq: 660, to: 990, dur: 0.6, type: 'triangle', gain: 0.06, attack: 0.08 });
+        break;
+      case 'beam':
+        T({ freq: 80, to: 140, dur: 1.2, type: 'sawtooth', gain: 0.18, filter: 900, attack: 0.05 });
+        N({ dur: 1.2, filter: 2500, gain: 0.25 });
+        break;
+      case 'rush':
+        N({ dur: 0.25, filter: 300, to: 2500, gain: 0.25 });
+        T({ freq: 120, to: 200, dur: 0.2, type: 'sawtooth', gain: 0.1, filter: 800 });
+        break;
+      case 'pact':
+        T({ freq: 110, to: 55, dur: 0.6, type: 'sawtooth', gain: 0.18, filter: 700 });
+        T({ freq: 233, dur: 0.5, type: 'triangle', gain: 0.08, delay: 0.1 });
+        N({ dur: 0.5, filter: 800, to: 200, gain: 0.2 });
+        break;
+      case 'iai':
+        T({ freq: 3000, to: 1200, dur: 0.15, type: 'triangle', gain: 0.08 });
+        N({ dur: 0.12, filter: 6000, type: 'highpass', gain: 0.18, delay: 0.02 });
+        break;
+      case 'booster':
+        N({ dur: 0.45, filter: 400, to: 3000, gain: 0.3 });
+        T({ freq: 60, to: 240, dur: 0.4, type: 'sawtooth', gain: 0.12, filter: 1000 });
+        break;
+      case 'achievement':
+        [523, 784, 1047, 1319].forEach((f, i) =>
+          T({ freq: f, dur: 0.4, type: 'triangle', gain: 0.1, delay: i * 0.07, bus: 'ui' }),
+        );
+        break;
       case 'unlock':
         [440, 554, 659, 880, 1109].forEach((f, i) =>
           T({ freq: f, dur: 0.35, type: 'triangle', gain: 0.12, delay: i * 0.08, bus: 'ui' }),

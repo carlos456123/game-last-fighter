@@ -24,6 +24,12 @@ const VFX_COLORS: Record<VfxId, number[]> = {
   shadow: [0xc9a8ff, 0x9b6bff, 0x3fe0c5],
   kunai: [0x3fe0c5, 0xffffff],
   ultimate_burst: [0xffffff, 0xffd34a, 0xff4d2e],
+  wind: [0xe8fff4, 0x7dffc9, 0x2f8f6a],
+  holy: [0xffffff, 0xfff1a8, 0xf2c14e],
+  chi: [0xffffff, 0x9ad8ff, 0x5aa8ff],
+  plasma: [0xd8fbff, 0x56e6ff, 0xff8a3d],
+  arcane: [0xf2e6ff, 0xc08bff, 0xe0b45a],
+  blood_fire: [0xffd0a0, 0xff5a1f, 0xb3121f],
 };
 
 /**
@@ -124,6 +130,13 @@ export class VfxManager {
       this.ringAt(e.x, this.toScreenY(e.y), COLORS.energy, 0.6);
       this.burst(this.sparks, e.x, this.toScreenY(e.y), 6, [0x9fd8ff, 0xffffff]);
       this.label(e.x, this.toScreenY(e.y) - 40, this.i18n.t('battle.blocked'), TEXT_COLORS.cyan, TYPE.small);
+    });
+    on('counter', (e) => {
+      const y = this.toScreenY(e.y);
+      this.ringAt(e.x, y, COLORS.energy, 1.6);
+      this.burst(this.sparks, e.x, y, 14, [0xffffff, 0x9ad8ff]);
+      this.label(e.x, y - 70, this.i18n.t('battle.counter'), TEXT_COLORS.cyan, TYPE.h3);
+      this.flash(COLORS.energy, 90);
     });
     on('perfectDodge', (e) => {
       this.ringAt(e.x, this.toScreenY(e.y), COLORS.cyan, 1.2);
@@ -313,8 +326,9 @@ export class VfxManager {
   private spawnProjectile(id: number, visual: string, owner: Side): void {
     const color = this.match.fighter(owner).data.palette.energy;
     let sprite: ProjectileVisual['sprite'];
-    if (visual === 'fireball') {
-      sprite = this.scene.add.image(0, 0, TEXTURES.glow).setTint(color).setBlendMode('ADD').setScale(1.3);
+    if (visual === 'fireball' || visual === 'plasma' || visual === 'orb') {
+      const scale = visual === 'orb' ? 1.5 : visual === 'plasma' ? 1.25 : 1.3;
+      sprite = this.scene.add.image(0, 0, TEXTURES.glow).setTint(color).setBlendMode('ADD').setScale(scale);
     } else {
       sprite = this.scene.add.graphics();
     }
@@ -340,9 +354,21 @@ export class VfxManager {
       if (!v) continue;
       const x = p.x;
       const y = this.toScreenY(p.y);
-      if (v.kind === 'fireball' && v.sprite instanceof Phaser.GameObjects.Image) {
-        v.sprite.setPosition(x, y).setScale(1.2 + Math.sin(clock * 0.6) * 0.15);
-        if (clock % 2 === 0) this.burst(this.trail, x - p.facing * 10, y, 2, [v.color, 0xffe08a]);
+      if (v.sprite instanceof Phaser.GameObjects.Image) {
+        if (v.kind === 'orb') {
+          // Zone orb: slow, pulsing, sheds small motes (cheap).
+          v.sprite
+            .setPosition(x, y)
+            .setScale(1.45 + Math.sin(clock * 0.25) * 0.12)
+            .setAlpha(p.ready ? 1 : 0.55);
+          if (clock % 5 === 0) this.burst(this.aura, x, y, 1, [v.color, 0xffffff]);
+        } else if (v.kind === 'plasma') {
+          v.sprite.setPosition(x, y).setScale(1.15 + Math.sin(clock * 0.9) * 0.1);
+          if (clock % 2 === 0) this.burst(this.trail, x - p.facing * 12, y, 1, [v.color, 0xffffff]);
+        } else {
+          v.sprite.setPosition(x, y).setScale(1.2 + Math.sin(clock * 0.6) * 0.15);
+          if (clock % 2 === 0) this.burst(this.trail, x - p.facing * 10, y, 2, [v.color, 0xffe08a]);
+        }
       } else if (v.sprite instanceof Phaser.GameObjects.Graphics) {
         const g = v.sprite;
         g.clear();
@@ -352,6 +378,28 @@ export class VfxManager {
           g.fillStyle(0xffffff, 0.6);
           g.fillTriangle(x - 16, y, x + 16 * p.facing, y, x, y - 26);
           if (clock % 3 === 0) this.burst(this.smoke, x, y, 1, [0x9a8470]);
+        } else if (v.kind === 'javelin') {
+          const len = 40;
+          g.lineStyle(7, 0x000000, 1);
+          g.lineBetween(x - len * p.facing, y, x + len * p.facing, y);
+          g.lineStyle(4, 0x8a6a3a, 1);
+          g.lineBetween(x - len * p.facing, y, x + (len - 10) * p.facing, y);
+          g.fillStyle(v.color, 1);
+          g.fillTriangle(
+            x + len * p.facing,
+            y,
+            x + (len - 16) * p.facing,
+            y - 7,
+            x + (len - 16) * p.facing,
+            y + 7,
+          );
+          g.lineStyle(3, v.color, 0.35);
+          g.lineBetween(x - (len + 40) * p.facing, y, x - len * p.facing, y);
+        } else if (v.kind === 'lightLance') {
+          g.fillStyle(v.color, 0.35);
+          g.fillEllipse(x, y - 12, 90, 30);
+          g.fillStyle(0xffffff, 0.9);
+          g.fillTriangle(x + 42 * p.facing, y - 12, x - 30 * p.facing, y - 20, x - 30 * p.facing, y - 4);
         } else {
           // Kunai: a small blade pointing in the travel direction.
           const angle = Math.atan2(-p.vy, p.vx);

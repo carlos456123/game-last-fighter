@@ -90,7 +90,87 @@ export const NEON_DOCK: ArenaData = {
   ],
 };
 
-export const ARENAS: readonly ArenaData[] = [COLOSSEUM, NEON_DOCK];
+/** Futuristic vertical district: industrial towers, neon signs and rain. */
+export const DISTRICT: ArenaData = {
+  id: 'district',
+  nameKey: 'arenas.district.name',
+  descKey: 'arenas.district.desc',
+  width: 1750,
+  floorY: 600,
+  bounds: { left: 85, right: 1665 },
+  spawn: { p1: 675, p2: 1075 },
+  music: 'battle_district',
+  ambient: 'rain',
+  ambientColor: 0xbfa8ff,
+  layers: [
+    { type: 'sky', top: 0x0b0618, bottom: 0x3a1640 },
+    { type: 'sun', x: 0.7, y: 130, radius: 46, color: 0xff9ad5, glow: 0xff3fa8 },
+    {
+      type: 'silhouette',
+      shape: 'skyline',
+      color: 0x1d1236,
+      baseY: 520,
+      height: 340,
+      seed: 33,
+      scroll: 0.15,
+      alpha: 1,
+    },
+    {
+      type: 'silhouette',
+      shape: 'industrial',
+      color: 0x140c26,
+      baseY: 575,
+      height: 300,
+      seed: 8,
+      scroll: 0.4,
+      alpha: 1,
+    },
+    { type: 'props', kind: 'signs', color: 0xff3fa8, spacing: 340, scroll: 0.7 },
+    { type: 'floor', color: 0x1a1424, lineColor: 0x33284a, edgeColor: 0xff3fa8, pattern: 'metal' },
+  ],
+};
+
+/** Ancient sanctuary of ash: ruined temple, braziers and falling ash. Final stage of the tournament. */
+export const SANCTUARY: ArenaData = {
+  id: 'sanctuary',
+  nameKey: 'arenas.sanctuary.name',
+  descKey: 'arenas.sanctuary.desc',
+  width: 1800,
+  floorY: 600,
+  bounds: { left: 90, right: 1710 },
+  spawn: { p1: 700, p2: 1100 },
+  music: 'battle_sanctuary',
+  ambient: 'ash',
+  ambientColor: 0xc9c2b8,
+  layers: [
+    { type: 'sky', top: 0x120b0b, bottom: 0x5a2a1a },
+    { type: 'sun', x: 0.45, y: 260, radius: 150, color: 0xb8462a, glow: 0x7a2210 },
+    {
+      type: 'silhouette',
+      shape: 'mountains',
+      color: 0x2a1512,
+      baseY: 500,
+      height: 200,
+      seed: 19,
+      scroll: 0.12,
+      alpha: 1,
+    },
+    {
+      type: 'silhouette',
+      shape: 'temple',
+      color: 0x1e0f0d,
+      baseY: 580,
+      height: 280,
+      seed: 4,
+      scroll: 0.38,
+      alpha: 1,
+    },
+    { type: 'props', kind: 'braziers', color: 0xff7a2a, spacing: 460, scroll: 0.75 },
+    { type: 'floor', color: 0x2e2522, lineColor: 0x4a3a33, edgeColor: 0xff7a2a, pattern: 'stone' },
+  ],
+};
+
+export const ARENAS: readonly ArenaData[] = [COLOSSEUM, NEON_DOCK, DISTRICT, SANCTUARY];
 
 export const getArena = (id: string): ArenaData => {
   const arena = ARENAS.find((a) => a.id === id);

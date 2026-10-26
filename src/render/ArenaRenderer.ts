@@ -177,6 +177,44 @@ export class ArenaRenderer {
         }
         break;
       }
+      case 'industrial': {
+        // Stacked factory blocks, chimneys, pipes and a few warm work lights.
+        for (let x = start; x < start + width;) {
+          const w = rng.range(90, 180);
+          const h = l.height * rng.range(0.45, 1);
+          g.fillStyle(l.color, 1);
+          g.fillRect(x, base - h, w, h + 200);
+          if (rng.chance(0.6)) {
+            const cx = x + rng.range(10, w - 30);
+            g.fillRect(cx, base - h - rng.range(40, 90), 18, 90);
+          }
+          if (rng.chance(0.5)) g.fillRect(x - 20, base - h * rng.range(0.3, 0.7), w + 40, 8);
+          g.fillStyle(0xff8a3d, 0.35);
+          for (let i = 0; i < 3; i++)
+            if (rng.chance(0.5)) g.fillRect(x + rng.range(8, w - 14), base - rng.range(20, h - 10), 6, 6);
+          x += w + rng.range(-10, 24);
+        }
+        break;
+      }
+      case 'temple': {
+        // Ruined pagoda-like shrines with tiered roofs, columns and broken stairs.
+        for (let x = start; x < start + width; x += rng.range(260, 380)) {
+          const w = rng.range(150, 230);
+          const h = l.height * rng.range(0.55, 1);
+          g.fillStyle(l.color, 1);
+          g.fillRect(x + w * 0.15, base - h * 0.55, w * 0.7, h * 0.55 + 200);
+          for (let tier = 0; tier < 3; tier++) {
+            const ty = base - h * (0.55 + tier * 0.17);
+            const tw = w * (1.1 - tier * 0.25);
+            const tx = x + (w - tw) / 2;
+            g.fillTriangle(tx - 20, ty, tx + tw + 20, ty, tx + tw / 2, ty - h * 0.12);
+            if (!(tier === 2 && rng.chance(0.4))) g.fillRect(tx + 10, ty - h * 0.08, tw - 20, h * 0.08);
+          }
+          for (let c = 0; c < 4; c++) g.fillRect(x + w * 0.2 + c * w * 0.18, base - h * 0.5, 10, h * 0.5);
+          g.fillRect(x - 10, base - 20, w + 20, 20);
+        }
+        break;
+      }
       default:
         break;
     }
@@ -204,6 +242,39 @@ export class ArenaRenderer {
           .setScale(1.4)
           .setDepth(DEPTH.background + 3);
         this.flames.push(flame);
+      } else if (l.kind === 'braziers') {
+        g.fillStyle(0x1a1210, 1);
+        g.fillRect(x - 10, floor - 110, 20, 110);
+        g.fillTriangle(x - 34, floor - 130, x + 34, floor - 130, x, floor - 104);
+        g.fillRect(x - 36, floor - 136, 72, 8);
+        const flame = this.addObj(s.add.image(x, floor - 150, TEXTURES.glow).setScrollFactor(l.scroll, 1));
+        flame
+          .setTint(l.color)
+          .setBlendMode('ADD')
+          .setScale(1.8)
+          .setDepth(DEPTH.background + 3);
+        this.flames.push(flame);
+      } else if (l.kind === 'signs') {
+        // Neon sign boards: alternate between the arena colour and cyan for variety.
+        const color = (x / l.spacing) % 2 < 1 ? l.color : 0x3fe0ff;
+        const h = 90 + ((x * 7) % 60);
+        g.fillStyle(0x0b0816, 1);
+        g.fillRect(x - 3, floor - 300, 6, 300);
+        g.fillRect(x - 24, floor - 300 - h, 48, h);
+        g.lineStyle(3, color, 0.9);
+        g.strokeRect(x - 20, floor - 296 - h, 40, h - 8);
+        g.fillStyle(color, 0.7);
+        for (let i = 0; i < 3; i++) g.fillRect(x - 10, floor - 286 - h + i * (h / 3.2), 20, 6);
+        const glow = this.addObj(
+          s.add.image(x, floor - 300 - h / 2, TEXTURES.glow).setScrollFactor(l.scroll, 1),
+        );
+        glow
+          .setTint(color)
+          .setBlendMode('ADD')
+          .setScale(2.4, 2.4 + h / 60)
+          .setAlpha(0.45)
+          .setDepth(DEPTH.background + 3);
+        this.flames.push(glow);
       } else {
         g.fillStyle(0x0b0c18, 1);
         g.fillRect(x - 4, floor - 240, 8, 240);
@@ -222,12 +293,13 @@ export class ArenaRenderer {
         this.flames.push(glow);
       }
     }
-    // Subtle flicker (one tween for all lights).
+    // Subtle flicker (one tween for all lights). Signs and lamps only pulse in opacity.
+    const fire = l.kind === 'torches' || l.kind === 'braziers';
     s.tweens.add({
       targets: this.flames,
       alpha: { from: 0.65, to: 1 },
-      scale: l.kind === 'torches' ? { from: 1.2, to: 1.55 } : { from: 2.1, to: 2.3 },
-      duration: l.kind === 'torches' ? 160 : 1400,
+      ...(fire ? { scale: l.kind === 'torches' ? { from: 1.2, to: 1.55 } : { from: 1.6, to: 2 } } : {}),
+      duration: fire ? 170 : l.kind === 'signs' ? 900 : 1400,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.InOut',
@@ -238,6 +310,25 @@ export class ArenaRenderer {
     const s = this.scene;
     const q = QUALITY_PRESETS[this.quality];
     const a = this.arena;
+    if (a.ambient === 'ash') {
+      this.addObj(
+        s.add
+          .particles(0, 0, TEXTURES.ember, {
+            x: { min: -100, max: a.width + 100 },
+            y: -20,
+            lifespan: 9000,
+            speedY: { min: 25, max: 60 },
+            speedX: { min: -30, max: 10 },
+            rotate: { min: 0, max: 360 },
+            scale: { start: 0.9, end: 0.5 },
+            alpha: { start: 0.7, end: 0 },
+            tint: [a.ambientColor, 0x8a8078],
+            frequency: Math.round(9000 / q.ambientParticles),
+          })
+          .setDepth(DEPTH.vfx - 1),
+      );
+      return;
+    }
     if (a.ambient === 'rain') {
       this.addObj(
         s.add

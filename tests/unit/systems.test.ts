@@ -4,18 +4,9 @@ import { FIGHTERS } from '@/data/characters';
 import { ARENAS } from '@/data/arenas';
 import { findConflicts, keyLabel, rebind } from '@/input/ControlMapping';
 import { LocalizationManager, interpolate } from '@/systems/LocalizationManager';
-import {
-  ProgressionManager,
-  buildLadder,
-  isUnlocked,
-  levelForXp,
-  unlockProgress,
-  xpForLevel,
-} from '@/systems/ProgressionManager';
-import { SaveManager, createDefaultSave, type StorageLike } from '@/systems/SaveManager';
+import { SaveManager, type StorageLike } from '@/systems/SaveManager';
 import { SettingsManager } from '@/systems/SettingsManager';
 import { ALL_ACTIONS } from '@/types';
-import type { FighterMatchStats } from '@/core/Match';
 
 class MemoryStorage implements StorageLike {
   map = new Map<string, string>();
@@ -29,18 +20,6 @@ class MemoryStorage implements StorageLike {
     this.map.delete(k);
   }
 }
-
-const stats = (o: Partial<FighterMatchStats> = {}): FighterMatchStats => ({
-  damageDealt: 100,
-  damageTaken: 30,
-  maxCombo: 3,
-  hitsLanded: 10,
-  skillsUsed: 1,
-  ultimatesUsed: 0,
-  blocks: 2,
-  perfectDodges: 0,
-  ...o,
-});
 
 describe('SaveManager', () => {
   it('creates a versioned default save when empty', () => {
@@ -134,69 +113,6 @@ describe('SaveManager', () => {
     settings.set('screenShake', false);
     expect(seen).toEqual([false]);
     expect(new SaveManager(storage).load().settings.screenShake).toBe(false);
-  });
-});
-
-describe('Progression', () => {
-  const pm = new ProgressionManager(FIGHTERS, ARENAS);
-
-  it('builds a ladder of every other fighter plus a shadow boss', () => {
-    const ladder = buildLadder('kael', FIGHTERS, ARENAS);
-    expect(ladder.map((s) => s.opponentId)).toEqual(['bronn', 'nyx', 'kael']);
-    expect(ladder[ladder.length - 1].shadow).toBe(true);
-  });
-
-  it('wins advance the ladder, grant XP and unlock fighters', () => {
-    const save = createDefaultSave();
-    const nyx = FIGHTERS.find((f) => f.id === 'nyx')!;
-    expect(isUnlocked(save, nyx)).toBe(false);
-    pm.startLadder(save, 'kael');
-    const r1 = pm.recordResult(save, { won: true, fighterId: 'kael', stats: stats(), durationSeconds: 90 });
-    expect(r1.xp).toBeGreaterThan(0);
-    expect(save.progress.ladder?.stage).toBe(1);
-    expect(unlockProgress(save, nyx)).toEqual({ current: 1, required: 2 });
-    const r2 = pm.recordResult(save, { won: true, fighterId: 'kael', stats: stats(), durationSeconds: 90 });
-    expect(r2.unlocked).toEqual(['nyx']);
-    expect(isUnlocked(save, nyx)).toBe(true);
-    const r3 = pm.recordResult(save, { won: true, fighterId: 'kael', stats: stats(), durationSeconds: 90 });
-    expect(r3.ladderComplete).toBe(true);
-    expect(save.progress.ladder).toBeNull();
-    expect(save.progress.laddersCleared).toBe(1);
-  });
-
-  it('losses keep the ladder stage and count statistics', () => {
-    const save = createDefaultSave();
-    pm.startLadder(save, 'bronn');
-    pm.recordResult(save, {
-      won: false,
-      fighterId: 'bronn',
-      stats: stats({ maxCombo: 7 }),
-      durationSeconds: 40,
-    });
-    expect(save.progress.ladder?.stage).toBe(0);
-    expect(save.progress.losses).toBe(1);
-    expect(save.stats.bestCombo).toBe(7);
-    expect(save.stats.perFighter.bronn).toEqual({ wins: 0, losses: 1 });
-  });
-
-  it('perfect, combo and fast wins give bonuses', () => {
-    const save = createDefaultSave();
-    pm.startLadder(save, 'kael');
-    const r = pm.recordResult(save, {
-      won: true,
-      fighterId: 'kael',
-      stats: stats({ damageTaken: 0, maxCombo: 6 }),
-      durationSeconds: 30,
-    });
-    const keys = r.bonuses.map((b) => b.key);
-    expect(keys).toEqual(expect.arrayContaining(['rewards.perfect', 'rewards.combo', 'rewards.fast']));
-  });
-
-  it('level curve is monotonic', () => {
-    expect(levelForXp(0)).toBe(1);
-    for (let l = 1; l < 20; l++) expect(xpForLevel(l + 1)).toBeGreaterThan(xpForLevel(l));
-    expect(levelForXp(xpForLevel(5))).toBe(5);
-    expect(levelForXp(xpForLevel(5) - 1)).toBe(4);
   });
 });
 

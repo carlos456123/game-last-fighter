@@ -3,6 +3,10 @@ import { EnemyAI } from '@/ai/EnemyAI';
 import { TrainingDummy } from '@/ai/TrainingDummy';
 import { FighterRenderer } from '@/animation/FighterRenderer';
 import { createShadowVariant, getFighter } from '@/characters/CharacterFactory';
+import { applySpecialization } from '@/characters/Specialization';
+import { masteryOf, specTier } from '@/systems/ProgressionManager';
+import { currentOpponent, resolvePlayerMatch } from '@/systems/TournamentManager';
+import { createMatchId, tournamentStrength } from '@/systems/MatchIds';
 import type { Side } from '@/characters/Character';
 import {
   CAMERA,
@@ -67,6 +71,7 @@ export class BattleScene extends Phaser.Scene {
   private ui!: Phaser.GameObjects.Layer;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   private accumulator = 0;
+  private matchId = '';
   private clock = 0;
   private zoom = 1;
   private camX = 0;
@@ -100,9 +105,16 @@ export class BattleScene extends Phaser.Scene {
     const { settings, i18n, audio, input, touch, keyboard } = this.services;
     const s = settings.settings;
     const arena = getArena(this.data_.arena);
-    const p1 = getFighter(this.data_.p1);
-    const base2 = getFighter(this.data_.p2);
-    const p2 = this.data_.shadow ? createShadowVariant(base2) : base2;
+    const { save } = this.services;
+    // The tournament uses standardized attributes; other modes apply the player's specialization.
+    const standardized = this.data_.mode === 'tournament';
+    const baseP1 = getFighter(this.data_.p1);
+    const p1 = standardized
+      ? baseP1
+      : applySpecialization(baseP1, masteryOf(save.data, baseP1.id).spec, specTier(save.data, baseP1.id));
+    // The Reflexo mirrors the player's actual fighter, specialization included.
+    const p2 = this.data_.shadow ? createShadowVariant(p1) : getFighter(this.data_.p2);
+    this.matchId = createMatchId();
     const training = this.data_.mode === 'training';
     this.match = new Match({ p1, p2, arena, mode: training ? 'training' : 'versus' });
     if (training) {
@@ -113,6 +125,8 @@ export class BattleScene extends Phaser.Scene {
         projectiles: this.match.combat.projectiles,
         bounds: this.match.bounds,
       });
+      // The Reflexo studies the player's habits (attack heights, jump-ins) during the fight.
+      this.ai.adaptive = this.data_.shadow;
     }
 
     // Two layers rendered by two cameras: the world camera zooms/scrolls, the UI camera never does.
@@ -161,7 +175,8 @@ export class BattleScene extends Phaser.Scene {
 
     this.camX = (this.match.p1.x + this.match.p2.x) / 2;
     this.updateCamera(true);
-    audio.playMusic(arena.music);
+    const bossFight = this.data_.shadow || (this.data_.mode === 'tournament' && this.data_.stage >= 2);
+    audio.playMusic(bossFight ? 'boss' : arena.music);
     this.registerApi();
     fadeIn(this);
   }
@@ -286,9 +301,30 @@ export class BattleScene extends Phaser.Scene {
     const durationSeconds = Math.round(this.match.fightFrames / FPS);
     const stats = this.match.stats.p1;
     let reward: Reward | null = null;
+    let tournament: ResultData['tournament'] = null;
+    const base = {
+      matchId: this.matchId,
+      won,
+      fighterId: this.data_.p1,
+      arenaId: this.data_.arena,
+      stats,
+      roundsLost: this.match.wins[1],
+      durationSeconds,
+      shadow: this.data_.shadow,
+      stage: this.data_.stage,
+    };
     if (this.data_.mode === 'ladder') {
       save.update((d) => {
-        reward = progression.recordResult(d, { won, fighterId: this.data_.p1, stats, durationSeconds });
+        reward = progression.recordMatch(d, { ...base, mode: 'arcade', tournamentChampion: false });
+      });
+    } else if (this.data_.mode === 'tournament') {
+      save.update((d) => {
+        const t = d.tournament;
+        // Only the bracket's current match counts; a stale battle (e.g. after a new edition) is ignored.
+        if (!t || t.status !== 'active' || currentOpponent(t) !== this.data_.p2) return;
+        const champion = resolvePlayerMatch(t, won, tournamentStrength);
+        tournament = { champion, eliminated: !won };
+        reward = progression.recordMatch(d, { ...base, mode: 'tournament', tournamentChampion: champion });
       });
     }
     const result: ResultData = {
@@ -298,6 +334,7 @@ export class BattleScene extends Phaser.Scene {
       stats,
       durationSeconds,
       reward,
+      tournament,
     };
     audio.stopMusic();
     goTo(this, won ? SCENES.victory : SCENES.defeat, result);

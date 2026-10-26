@@ -3,6 +3,9 @@ import { BattleScene } from '@/scenes/BattleScene';
 import { BootScene } from '@/scenes/BootScene';
 import { CharacterSelectScene } from '@/scenes/CharacterSelectScene';
 import { CreditsScene } from '@/scenes/CreditsScene';
+import { DialogScene } from '@/scenes/DialogScene';
+import { ProgressionScene } from '@/scenes/ProgressionScene';
+import { TournamentScene } from '@/scenes/TournamentScene';
 import { DefeatScene } from '@/scenes/DefeatScene';
 import { MenuScene } from '@/scenes/MenuScene';
 import { PauseScene } from '@/scenes/PauseScene';
@@ -40,5 +43,8 @@ export const createGameConfig = (parent: string): Phaser.Types.Core.GameConfig =
     DefeatScene,
     SettingsScene,
     CreditsScene,
+    TournamentScene,
+    ProgressionScene,
+    DialogScene,
   ],
 });

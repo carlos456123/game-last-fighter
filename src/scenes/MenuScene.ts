@@ -96,13 +96,15 @@ export class MenuScene extends Phaser.Scene {
       {
         id: 'menu-play',
         label: t('menu.play'),
-        action: () => goTo(this, SCENES.select, { browse: false } satisfies SelectData),
+        action: () => goTo(this, SCENES.select, { mode: 'arcade' } satisfies SelectData),
       },
       {
-        id: 'menu-characters',
-        label: t('menu.characters'),
-        action: () => goTo(this, SCENES.select, { browse: true } satisfies SelectData),
+        id: 'menu-tournament',
+        label:
+          save.data.tournament?.status === 'active' ? t('menu.tournamentContinue') : t('menu.tournament'),
+        action: () => goTo(this, SCENES.tournament),
       },
+      { id: 'menu-progression', label: t('menu.progression'), action: () => goTo(this, SCENES.progression) },
       { id: 'menu-tutorial', label: t('menu.howToPlay'), action: () => goTo(this, SCENES.tutorial) },
       {
         id: 'menu-settings',
@@ -111,9 +113,16 @@ export class MenuScene extends Phaser.Scene {
       },
       { id: 'menu-credits', label: t('menu.credits'), action: () => goTo(this, SCENES.credits) },
     );
-    const startY = 330;
+    const spacing = items.length > 7 ? 54 : 58;
+    const startY = items.length > 7 ? 292 : 312;
     const buttons = items.map(
-      (it, i) => new Button(this, 400, startY + i * 66, { id: it.id, label: it.label, onClick: it.action }),
+      (it, i) =>
+        new Button(this, 400, startY + i * spacing, {
+          id: it.id,
+          label: it.label,
+          onClick: it.action,
+          height: 50,
+        }),
     );
     buttons.forEach((b, i) => {
       b.setAlpha(0).setX(340);
@@ -126,7 +135,7 @@ export class MenuScene extends Phaser.Scene {
       .text(
         24,
         GAME_HEIGHT - 24,
-        `${t('common.level', { level: levelForXp(p.xp) })} · ${t('menu.record', { wins: p.wins, cleared: p.laddersCleared })}`,
+        `${t('common.level', { level: levelForXp(p.xp) })}${p.activeTitle ? ` · ${t(p.activeTitle)}` : ''} · ${t('menu.record', { wins: p.wins, cleared: p.laddersCleared })}`,
         textStyle({ size: TYPE.tiny, color: TEXT_COLORS.dim }),
       )
       .setOrigin(0, 1);

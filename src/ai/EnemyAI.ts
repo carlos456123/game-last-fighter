@@ -47,6 +47,12 @@ export class EnemyAI {
   perception: Perception | null = null;
   /** Lets tests and the tutorial freeze the AI. */
   enabled = true;
+  /**
+   * Adaptive mode (the Reflexo): learns how often the player attacks low and jumps in, and
+   * adjusts its guard and anti-air timing. It only uses information a human could observe.
+   */
+  adaptive = false;
+  private readonly habits = { low: 0, high: 0, jumps: 0, seenMove: -1, wasAirborne: false };
 
   constructor(
     readonly self: Character,
@@ -70,6 +76,7 @@ export class EnemyAI {
     this.held = createButtonState();
     this.taps = [];
     this.history.push(snapshotOf(this.opponent));
+    if (this.adaptive) this.observeHabits();
     if (this.history.length > HISTORY) this.history.shift();
     if (!this.enabled) return this.output();
 
@@ -161,9 +168,24 @@ export class EnemyAI {
       }
       return;
     }
+    // Read an incoming attack with a counter stance (defensive fighters only, never with perfect timing).
+    const counterMove = this.roles.counter;
+    if (
+      counterMove &&
+      p.opp.attacking &&
+      p.opp.phase === 'startup' &&
+      p.gap < 150 &&
+      current !== AIState.USE_SKILL &&
+      !s.skills.check(counterMove, false) &&
+      this.rng.chance(this.profile.defense * d.punishChance * 0.35)
+    ) {
+      this.chosenSkill = counterMove;
+      this.machine.change(AIState.USE_SKILL);
+      return;
+    }
     // Anti-air a jump-in.
     if (p.opp.airborne && p.gap < 200 && p.opp.vx * p.dir < 0 && current !== AIState.USE_SKILL) {
-      if (this.rng.chance(d.antiAirChance * 0.15)) {
+      if (this.rng.chance(d.antiAirChance * 0.15 * this.jumpReadBonus())) {
         const anti = this.roles.antiAir;
         if (anti && !s.skills.check(anti, false)) {
           this.chosenSkill = anti;
@@ -173,6 +195,29 @@ export class EnemyAI {
         }
       }
     }
+  }
+
+  private observeHabits(): void {
+    const o = this.opponent;
+    const h = this.habits;
+    if (o.move && o.moveInstance !== h.seenMove) {
+      h.seenMove = o.moveInstance;
+      if (o.move.hit.level === 'low') h.low++;
+      else h.high++;
+    }
+    if (o.airborne && !h.wasAirborne && o.state === 'JUMP') h.jumps++;
+    h.wasAirborne = o.airborne;
+  }
+
+  /** Crouch-blocks by default when the player mostly attacks low (adaptive only). */
+  private expectsLow(): boolean {
+    const { low, high } = this.habits;
+    return this.adaptive && low + high >= 4 && low / (low + high) > 0.5;
+  }
+
+  /** Frequent jump-ins make the adaptive AI anti-air more often (capped). */
+  private jumpReadBonus(): number {
+    return this.adaptive ? Math.min(2.5, 1 + this.habits.jumps * 0.15) : 1;
   }
 
   // ---------------------------------------------------------------- input helpers
@@ -210,8 +255,13 @@ export class EnemyAI {
       for (let i = 1; i < lights; i++) steps.push({ button: 'light' });
       if (this.rng.chance(0.4 + combo * 0.4)) steps.push({ button: 'heavy' });
     }
-    if (this.rng.chance(this.profile.skill * 0.6))
-      steps.push({ button: this.rng.chance(0.5) ? 'skill' : 'special' });
+    // Finishers: only specials that work as combo enders (no counter stances, no health costs).
+    const finishers = (['skill', 'special'] as const).filter((slot) => {
+      const m = this.self.moveForSlot(slot);
+      return !m.counter && !m.healthCost;
+    });
+    if (finishers.length > 0 && this.rng.chance(this.profile.skill * 0.6))
+      steps.push({ button: this.rng.pick(finishers) });
     this.combo = steps;
     this.comboIndex = 0;
     this.lastMoveInstance = this.self.moveInstance;
@@ -297,6 +347,8 @@ export class EnemyAI {
             return s.move ? null : AIState.OBSERVE;
           }
           const step = this.combo[this.comboIndex];
+          // Never swing into a visible counter stance.
+          if (this.comboIndex === 0 && p.opp.countering) return f > 20 ? AIState.OBSERVE : null;
           if (this.comboIndex === 0) {
             if (p.gap > this.roles.heavyReach + 20 && !s.airborne && s.state !== 'JUMP') {
               this.moveTowards();
@@ -333,7 +385,7 @@ export class EnemyAI {
           const p = this.perception;
           if (!p) return null;
           this.hold('block');
-          if (p.opp.level === 'low' && this.rng.chance(0.85)) this.hold('down');
+          if ((p.opp.level === 'low' && this.rng.chance(0.85)) || this.expectsLow()) this.hold('down');
           const threat = p.opp.attacking || (p.incomingProjectile !== null && p.projectileFrames < 40);
           if (this.self.blockstun > 0) return null;
           if (!threat && f > 12) {
@@ -411,7 +463,8 @@ export class EnemyAI {
 
   private pickSkill(p: Perception): MoveData | null {
     const s = this.self;
-    const usable = (m: MoveData | null): m is MoveData => m !== null && !s.skills.check(m, false);
+    const usable = (m: MoveData | null): m is MoveData =>
+      m !== null && !m.counter && !s.skills.check(m, false) && (m.healthCost ?? 0) < s.health * 0.4;
     if (p.gap > 260 && usable(this.roles.zoning)) return this.roles.zoning;
     if (usable(this.roles.approach)) return this.roles.approach;
     if (usable(this.roles.zoning)) return this.roles.zoning;

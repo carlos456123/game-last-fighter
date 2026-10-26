@@ -1,4 +1,5 @@
 import type { FighterData } from '@/types';
+import { UNLOCK_RULES } from '@/data/progression/unlocks';
 import { CANCELS, hit, move } from './moveFactory';
 
 /**
@@ -16,7 +17,7 @@ export const NYX: FighterData = {
   weaknessKey: 'fighters.nyx.weakness',
   archetype: 'assassin',
   mainAttribute: 'speed',
-  unlock: { type: 'wins', count: 2 },
+  unlock: UNLOCK_RULES.nyx,
   stats: {
     health: 86,
     walkSpeed: 280,

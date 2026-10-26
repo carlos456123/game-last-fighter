@@ -263,15 +263,110 @@ export class FighterRenderer {
     const legColor = tint(p.secondary);
     const backLeg = tint(shade(p.secondary, 0.7));
 
-    // Far side first.
+    // Far side first: capes and long hair flow behind the body.
+    if (f.has('cape')) this.drawCape(sk, tint);
+    if (f.has('longHair')) this.drawHairFlow(sk, tint, 5, 18);
+    if (f.has('ponytail')) this.drawHairFlow(sk, tint, 4, 13);
     if (f.has('scarf')) this.drawScarf(sk, tint);
     this.drawArm(sk.shoulderB, sk.elbowB, sk.handB, t, backArm, tint, true);
     this.drawLeg(sk.hipB, sk.kneeB, sk.footB, t, backLeg, tint);
     this.drawTorso(sk, tint);
     this.drawLeg(sk.hipF, sk.kneeF, sk.footF, t, legColor, tint);
     if (f.has('shoulderPads')) this.drawShoulderPads(sk, tint);
+    if (f.has('spikedPad')) this.drawSpikedPad(sk, tint);
     this.drawHead(sk, tint);
     this.drawArm(sk.shoulderF, sk.elbowF, sk.handF, t, armColor, tint, false);
+  }
+
+  /** Long weapons held in the front hand, aligned with the forearm. */
+  private drawWeapon(elbow: Vec, hand: Vec, tint: (c: number) => number): void {
+    const f = this.data.body.features;
+    const p = this.palette;
+    const dx = hand.x - elbow.x;
+    const dy = hand.y - elbow.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const d = { x: dx / len, y: dy / len };
+    const perp = { x: -d.y, y: d.x };
+    const g = this.g;
+    const line = (a: Vec, b: Vec, width: number, color: number, alpha = 1): void => {
+      const wa = this.w(a);
+      const wb = this.w(b);
+      g.lineStyle(width * this.scale, color, alpha);
+      g.lineBetween(wa.x, wa.y, wb.x, wb.y);
+    };
+    if (f.includes('katana')) {
+      const tip = this.add(hand, d, 72);
+      line(hand, tip, 7, this.outline);
+      line(hand, tip, 4, tint(0xe8eef2));
+      line(this.add(hand, d, 6), tip, 1.4, 0xffffff, 0.9);
+      line(this.add(hand, perp, -7), this.add(hand, perp, 7), 4, tint(p.accent));
+    }
+    if (f.includes('spear')) {
+      const butt = this.add(hand, d, -60);
+      const tip = this.add(hand, d, 98);
+      line(butt, tip, 8, this.outline);
+      line(butt, tip, 4.5, tint(0x8a6a3a));
+      this.poly(
+        [this.add(tip, d, 22), this.add(tip, perp, 7), this.add(tip, d, -6), this.add(tip, perp, -7)],
+        tint(p.accent),
+      );
+    }
+    if (f.includes('staff')) {
+      const back = this.add(hand, d, -72);
+      const front = this.add(hand, d, 70);
+      line(back, front, 8, this.outline);
+      line(back, front, 4.5, tint(shade(p.accent, 0.7)));
+      const orb = this.w(this.add(front, d, 6));
+      g.fillStyle(p.energy, 0.35);
+      g.fillCircle(orb.x, orb.y, 13 * this.scale);
+      this.circle(this.add(front, d, 6), 7, tint(p.energy));
+    }
+  }
+
+  private drawCape(sk: Skeleton, tint: (c: number) => number): void {
+    const p = this.palette;
+    const wave = Math.sin(this.time * 0.14) * 6;
+    const top = this.add(sk.neck, sk.up, -4);
+    const shoulder = this.add(top, sk.forward, -this.data.body.shoulderWidth * 0.5);
+    const low = { x: sk.hip.x - 34 + wave, y: Math.max(8, sk.hip.y - 70) };
+    const mid = { x: sk.hip.x - 44 - wave * 0.5, y: sk.hip.y + 10 };
+    this.poly(
+      [top, shoulder, mid, low, { x: sk.hip.x - 6, y: Math.max(10, sk.hip.y - 60) }],
+      tint(p.secondary),
+    );
+  }
+
+  /** Long hair or ponytail: a waving strand from the back of the head. */
+  private drawHairFlow(sk: Skeleton, tint: (c: number) => number, segments: number, width: number): void {
+    const p = this.palette;
+    const r = sk.headR;
+    const long = width > 15;
+    const start = this.add(this.add(sk.head, sk.forward, -r * 0.7), sk.up, r * 0.5);
+    let prev = start;
+    for (let i = 1; i <= segments; i++) {
+      const wave = Math.sin(this.time * 0.17 - i * 0.8) * (2 + i * 1.6);
+      const next = { x: start.x - i * (long ? 7 : 13), y: start.y - i * (long ? 17 : 9) + wave };
+      this.limb(prev, next, Math.max(4, width - i * 2.2), tint(p.hair));
+      prev = next;
+    }
+  }
+
+  private drawSpikedPad(sk: Skeleton, tint: (c: number) => number): void {
+    const t = this.data.body.limbThickness;
+    const p = this.palette;
+    const c = this.add(this.add(sk.shoulderF, sk.up, -t * 0.2), sk.forward, t * 0.1);
+    this.circle(c, t * 0.85, tint(p.primary));
+    for (let i = 0; i < 3; i++) {
+      const a = -0.5 + i * 0.5;
+      const dir = { x: Math.sin(a) * 0.6 + sk.up.x, y: Math.cos(a) * 0.6 + sk.up.y };
+      const base = this.add(c, dir, t * 0.6);
+      const tip = this.add(c, dir, t * 1.6);
+      const side = { x: -dir.y * t * 0.3, y: dir.x * t * 0.3 };
+      this.poly(
+        [{ x: base.x + side.x, y: base.y + side.y }, tip, { x: base.x - side.x, y: base.y - side.y }],
+        tint(p.accent),
+      );
+    }
   }
 
   private drawLeg(
@@ -301,7 +396,19 @@ export class FighterRenderer {
     const f = this.data.body.features;
     const p = this.palette;
     this.limb(shoulder, elbow, t, color);
+    if (!back && f.includes('armCannon')) {
+      // R-0N's front forearm is a plasma cannon instead of a hand.
+      const half = { x: (elbow.x + hand.x) / 2, y: (elbow.y + hand.y) / 2 };
+      this.limb(elbow, hand, t * 1.35, tint(shade(p.primary, 0.8)));
+      this.limb(half, hand, t * 1.5, tint(p.accent));
+      const muzzle = this.w(hand);
+      this.g.fillStyle(p.energy, 0.4);
+      this.g.fillCircle(muzzle.x, muzzle.y, t * 0.95 * this.scale);
+      this.circle(hand, t * 0.5, tint(p.energy));
+      return;
+    }
     this.limb(elbow, hand, t * 0.92, color);
+    if (!back) this.drawWeapon(elbow, hand, tint);
     if (f.includes('wraps')) {
       const mid = { x: (elbow.x + hand.x) / 2, y: (elbow.y + hand.y) / 2 };
       this.limb(mid, hand, t * 0.95, tint(back ? shade(p.accent, 0.75) : p.accent));
@@ -410,7 +517,65 @@ export class FighterRenderer {
       this.drawEye(h, r, fw, up, tint(p.accent), true);
       return;
     }
+    if (f.has('robotHead')) {
+      this.drawRobotHead(sk, tint);
+      return;
+    }
     this.circle(h, r, tint(p.skin));
+    if (f.has('longHair') || f.has('ponytail')) {
+      // Hair cap over the top/back of the head.
+      this.poly(
+        [
+          this.add(this.add(h, fw, r * 0.95), up, r * 0.35),
+          this.add(h, up, r * 1.12),
+          this.add(this.add(h, fw, -r * 1.05), up, r * 0.3),
+          this.add(this.add(h, fw, -r * 0.95), up, -r * 0.5),
+          this.add(h, fw, -r * 0.2),
+        ],
+        tint(p.hair),
+      );
+    }
+    if (f.has('topknot')) {
+      const bun = this.add(this.add(h, up, r * 1.15), fw, -r * 0.25);
+      this.circle(bun, r * 0.45, tint(p.hair));
+      this.poly(
+        [this.add(h, up, r * 1.05), this.add(this.add(h, fw, -r), up, r * 0.3), this.add(h, fw, r * 0.5)],
+        tint(p.hair),
+        false,
+      );
+    }
+    if (f.has('mohawk')) {
+      for (let i = 0; i < 4; i++) {
+        const base = this.add(this.add(h, up, r * (1 - i * 0.12)), fw, r * (0.5 - i * 0.42));
+        const tip = this.add(this.add(base, up, r * 0.85), fw, -r * 0.35);
+        const rear = this.add(base, fw, -r * 0.45);
+        this.poly([base, tip, rear], tint(p.hair));
+      }
+    }
+    if (f.has('wingedHelmet')) {
+      for (const k of [0, 1]) {
+        const root = this.add(this.add(h, fw, -r * (0.5 + k * 0.25)), up, r * (0.6 + k * 0.1));
+        this.poly(
+          [
+            root,
+            this.add(this.add(root, fw, -r * 1.6), up, r * 1.5),
+            this.add(this.add(root, fw, -r * 0.6), up, r * 0.2),
+          ],
+          tint(k === 0 ? p.primary : shade(p.primary, 0.85)),
+        );
+      }
+      this.poly(
+        [
+          this.add(this.add(h, fw, r * 1.05), up, r * 0.15),
+          this.add(this.add(h, fw, r * 0.5), up, r * 1.05),
+          this.add(this.add(h, fw, -r * 0.6), up, r * 1.0),
+          this.add(this.add(h, fw, -r * 1.08), up, r * 0.05),
+          this.add(this.add(h, fw, -r * 0.8), up, -r * 0.55),
+          this.add(this.add(h, fw, r * 0.25), up, r * 0.1),
+        ],
+        tint(p.accent),
+      );
+    }
     if (f.has('hairSpikes')) {
       for (let i = 0; i < 3; i++) {
         const base = this.add(this.add(h, up, r * (0.85 - i * 0.35)), fw, -r * (0.2 + i * 0.35));
@@ -434,6 +599,12 @@ export class FighterRenderer {
       this.limb(back, t1, r * 0.28, tint(p.primary));
       this.limb(t1, t2, r * 0.22, tint(p.primary));
     }
+    if (f.has('longBeard')) {
+      const chinA = this.add(this.add(h, fw, r * 0.95), up, -r * 0.05);
+      const tip = this.add(this.add(h, fw, r * 0.55), up, -r * 2.4);
+      const jaw = this.add(this.add(h, fw, -r * 0.35), up, -r * 0.6);
+      this.poly([chinA, tip, jaw], tint(p.hair));
+    }
     if (f.has('beard')) {
       const chinA = this.add(this.add(h, fw, r * 0.95), up, -r * 0.1);
       const chinB = this.add(this.add(h, fw, r * 0.4), up, -r * 1.25);
@@ -441,6 +612,38 @@ export class FighterRenderer {
       this.poly([chinA, chinB, jaw], tint(p.hair));
     }
     this.drawEye(h, r, fw, up, tint(0x15101a), false);
+  }
+
+  private drawRobotHead(sk: Skeleton, tint: (c: number) => number): void {
+    const p = this.palette;
+    const r = sk.headR * 1.12;
+    const h = sk.head;
+    const fw = sk.forward;
+    const up = sk.up;
+    this.poly(
+      [
+        this.add(this.add(h, fw, r), up, r * 0.7),
+        this.add(this.add(h, fw, -r * 0.9), up, r * 0.85),
+        this.add(this.add(h, fw, -r * 1.05), up, -r * 0.6),
+        this.add(this.add(h, fw, -r * 0.3), up, -r * 1.0),
+        this.add(this.add(h, fw, r * 1.1), up, -r * 0.7),
+      ],
+      tint(p.primary),
+    );
+    // Glowing visor
+    const v1 = this.w(this.add(this.add(h, fw, r * 0.05), up, r * 0.12));
+    const v2 = this.w(this.add(this.add(h, fw, r * 1.05), up, r * 0.08));
+    const g = this.g;
+    g.lineStyle(8 * this.scale, p.energy, 0.35);
+    g.lineBetween(v1.x, v1.y, v2.x, v2.y);
+    g.lineStyle(4 * this.scale, tint(p.energy), 1);
+    g.lineBetween(v1.x, v1.y, v2.x, v2.y);
+    if (this.data.body.features.includes('antenna')) {
+      const base = this.add(this.add(h, up, r * 0.8), fw, -r * 0.4);
+      const tip = this.add(this.add(base, up, r * 1.3), fw, -r * 0.4);
+      this.limb(base, tip, 3, tint(shade(p.primary, 0.7)));
+      this.circle(tip, 3.5, tint(p.accent));
+    }
   }
 
   private drawEye(h: Vec, r: number, fw: Vec, up: Vec, color: number, glow: boolean): void {

@@ -21,6 +21,8 @@ export interface OpponentSnapshot {
   invulnerable: boolean;
   knockedDown: boolean;
   healthRatio: number;
+  /** In a counter stance: attacking now would be punished. */
+  countering: boolean;
 }
 
 export interface Perception {
@@ -39,6 +41,8 @@ export interface MoveRoles {
   zoning: MoveData | null;
   antiAir: MoveData | null;
   approach: MoveData | null;
+  /** Counter stance special (Mestre Han). */
+  counter: MoveData | null;
   ultimate: MoveData;
   lightReach: number;
   heavyReach: number;
@@ -50,13 +54,22 @@ export const classifyMoves = (fighter: Character): MoveRoles => {
   const specials: MoveSlot[] = ['skill', 'special'];
   const moves = specials.map((s) => fighter.moveForSlot(s));
   const zoning = moves.find((m) => m.projectile) ?? null;
-  const antiAir = moves.find((m) => m.invulnerable && (m.movement?.vy ?? 0) > 0) ?? null;
+  const antiAir =
+    moves.find(
+      (m) => (m.invulnerable || m.armor) && (m.movement?.vy ?? 0) > 0 && m.movement?.phase !== 'startup',
+    ) ?? null;
   const approach =
-    moves.find((m) => m.teleport) ?? moves.find((m) => m.armor && (m.movement?.vx ?? 0) > 0) ?? null;
+    moves.find((m) => m.teleport) ??
+    moves.find((m) => m.armor && (m.movement?.vx ?? 0) > 0) ??
+    moves.find((m) => m.path?.some((seg) => seg.vx > 500)) ??
+    moves.find((m) => (m.movement?.vx ?? 0) > 500 && !m.healthCost) ??
+    null;
+  const counter = moves.find((m) => m.counter) ?? null;
   return {
     zoning,
     antiAir,
     approach,
+    counter,
     ultimate: fighter.moveForSlot('ultimate'),
     // Reach expressed as the gap between bodies, the same unit the perception uses.
     lightReach: reachOf(fighter.moveForSlot('light')) - fighter.data.body.width / 2,
@@ -78,6 +91,7 @@ export const snapshotOf = (c: Character): OpponentSnapshot => ({
   invulnerable: c.isInvulnerable(),
   knockedDown: c.state === 'KNOCKDOWN',
   healthRatio: c.health / c.maxHealth,
+  countering: c.isCountering(),
 });
 
 /** Estimated horizontal reach of the ultimate, including movement and teleports. */
@@ -104,11 +118,15 @@ export const chooseStrategy = (
   const inHeavy = p.gap <= roles.heavyReach + 10;
   const far = p.gap > profile.preferredRange + 60;
 
-  const ultReady = !self.skills.check(roles.ultimate, false);
-  const ultInRange = roles.ultimate.groundedTargetsOnly
-    ? !p.opp.airborne && p.gap < 600
-    : p.gap <= ultimateReach(roles.ultimate);
-  if (ultReady && ultInRange && !p.opp.invulnerable) {
+  const ult = roles.ultimate;
+  const ultReady = !self.skills.check(ult, false) && (ult.healthCost ?? 0) < self.health - 5;
+  // Counter ultimates only make sense as a read against an incoming attack.
+  const ultInRange = ult.counter
+    ? p.opp.attacking && p.opp.phase === 'startup' && p.gap < 160
+    : ult.groundedTargetsOnly
+      ? !p.opp.airborne && p.gap < 600
+      : p.gap <= ultimateReach(ult);
+  if (ultReady && ultInRange && !p.opp.invulnerable && !p.opp.countering) {
     scores.USE_ULTIMATE = 1.2 + (p.opp.phase === 'recovery' ? 1 : 0) + (p.opp.healthRatio < 0.4 ? 0.6 : 0);
   }
 

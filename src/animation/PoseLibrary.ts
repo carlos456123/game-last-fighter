@@ -495,6 +495,334 @@ export const ANIMATIONS: Record<string, AnimationDef> = {
     { hipY: 0.62, lean: 22, handF: [0.25, 0.35], handB: [0.3, 0.3] },
     { handF: [0.96, 0.2], handB: [-0.8, 0.0], lean: 28, hipX: 0.1, footF: [0.55, 0] },
   ),
+  // ---------------------------------------------------------------- expansion roster
+  katana_slash: strike(
+    { handF: [-0.2, 0.75], handB: [-0.1, 0.7], lean: -6 },
+    { handF: [0.95, 0.0], handB: [0.75, 0.05], lean: 24, hipX: 0.1, footF: [0.5, 0] },
+  ),
+  iaido: strike(
+    { hipY: 0.66, lean: 28, handF: [-0.3, -0.2], handB: [-0.2, -0.25], footF: [0.45, 0], footB: [-0.45, 0] },
+    {
+      hipY: 0.7,
+      lean: 30,
+      handF: [1.0, 0.1],
+      handB: [-0.6, 0.0],
+      hipX: 0.2,
+      footF: [0.7, 0],
+      footB: [-0.5, 0],
+    },
+  ),
+  dash_slash: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [0.18, P({ lean: -14, hipY: 0.8, handF: [0.2, 0.5], footF: [0.1, 0.05], footB: [-0.55, 0] })],
+      [
+        0.36,
+        P({
+          lean: 36,
+          hipY: 0.6,
+          handF: [-0.4, -0.1],
+          handB: [-0.5, -0.2],
+          footF: [0.6, 0],
+          footB: [-0.6, 0.05],
+        }),
+      ],
+      [
+        0.45,
+        P({
+          lean: 34,
+          hipY: 0.62,
+          handF: [1.0, 0.05],
+          handB: [-0.7, -0.1],
+          footF: [0.65, 0],
+          footB: [-0.6, 0.05],
+        }),
+      ],
+      [
+        0.62,
+        P({
+          lean: 30,
+          hipY: 0.64,
+          handF: [0.95, 0.0],
+          handB: [-0.7, -0.1],
+          footF: [0.6, 0],
+          footB: [-0.55, 0],
+        }),
+      ],
+      [1, STANCE],
+    ],
+  },
+  crescent_flip: {
+    loop: false,
+    keys: [
+      [0, CROUCH],
+      [
+        0.25,
+        P({ rot: -120, hipY: 1, footF: [0.2, 0.4], footB: [0.0, 0.5], handF: [0.4, 0.6], handB: [0.2, 0.6] }),
+      ],
+      [
+        0.42,
+        P({ rot: -260, hipY: 1, footF: [0.5, 0.2], footB: [0.1, 0.4], handF: [0.9, 0.2], handB: [0.4, 0.2] }),
+      ],
+      [
+        0.6,
+        P(
+          {
+            rot: -360,
+            hipY: 1,
+            footF: [0.3, 0.1],
+            footB: [-0.2, 0.2],
+            handF: [0.8, -0.3],
+            handB: [0.5, -0.3],
+          },
+          AIR,
+        ),
+      ],
+      [1, P({}, AIR)],
+    ],
+  },
+  spear_thrust: strike(
+    { handF: [0.1, 0.15], handB: [-0.2, 0.1], lean: -4, hipX: -0.04 },
+    { handF: [1.05, 0.1], handB: [0.45, 0.1], lean: 22, hipX: 0.14, footF: [0.55, 0], footB: [-0.45, 0] },
+  ),
+  spear_sweep: strike(
+    { handF: [-0.4, 0.8], handB: [-0.2, 0.6], lean: -16 },
+    { handF: [0.9, -0.2], handB: [0.5, 0.0], lean: 30, hipY: 0.8, footF: [0.5, 0] },
+  ),
+  javelin_throw: strike(
+    { handF: [-0.5, 0.65], handB: [0.4, 0.3], lean: -18, hipX: -0.08, footB: [-0.45, 0] },
+    { handF: [1.0, 0.4], handB: [-0.3, -0.1], lean: 22, hipX: 0.12, footF: [0.5, 0] },
+  ),
+  shield_bash: strike(
+    { handF: [0.25, 0.35], handB: [0.2, 0.3], lean: 10, hipY: 0.82 },
+    {
+      handF: [0.75, 0.3],
+      handB: [0.6, 0.25],
+      lean: 34,
+      hipY: 0.82,
+      head: 10,
+      footF: [0.6, 0],
+      footB: [-0.55, 0.05],
+    },
+  ),
+  ultimate_dive: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [
+        0.2,
+        P({
+          hipY: 1,
+          lean: -10,
+          handF: [0.3, 1.0],
+          handB: [-0.4, 0.6],
+          footF: [0.1, 0.3],
+          footB: [-0.2, 0.2],
+        }),
+      ],
+      [
+        0.4,
+        P({
+          hipY: 1,
+          lean: 50,
+          handF: [0.9, -0.6],
+          handB: [0.6, -0.5],
+          footF: [-0.2, 0.4],
+          footB: [-0.4, 0.5],
+        }),
+      ],
+      [
+        0.62,
+        P({ hipY: 0.8, lean: 40, handF: [0.9, -0.7], handB: [0.6, -0.6], footF: [0.4, 0], footB: [-0.5, 0] }),
+      ],
+      [1, STANCE],
+    ],
+  },
+  palm_strike: strike(
+    { handF: [0.15, 0.2], handB: [0.3, 0.1], lean: 0, hipY: 0.82 },
+    {
+      handF: [0.98, 0.1],
+      handB: [-0.1, 0.0],
+      lean: 14,
+      hipY: 0.8,
+      hipX: 0.08,
+      footF: [0.5, 0],
+      footB: [-0.45, 0],
+    },
+  ),
+  counter_stance: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [
+        0.08,
+        P({
+          hipY: 0.74,
+          lean: -4,
+          handF: [0.55, 0.3],
+          handB: [0.25, 0.55],
+          footF: [0.4, 0],
+          footB: [-0.42, 0],
+        }),
+      ],
+      [
+        0.55,
+        P({
+          hipY: 0.72,
+          lean: -6,
+          handF: [0.58, 0.32],
+          handB: [0.24, 0.58],
+          footF: [0.4, 0],
+          footB: [-0.42, 0],
+        }),
+      ],
+      [
+        0.62,
+        P({ hipY: 0.78, lean: 24, handF: [1.0, 0.15], handB: [-0.2, 0.0], hipX: 0.12, footF: [0.55, 0] }),
+      ],
+      [1, STANCE],
+    ],
+  },
+  tiger_step: strike(
+    { hipY: 0.62, lean: 30, handF: [0.2, 0.0], handB: [-0.3, -0.1], footF: [0.5, 0], footB: [-0.5, 0] },
+    {
+      hipY: 0.76,
+      lean: 28,
+      handF: [1.0, 0.25],
+      handB: [0.9, 0.0],
+      hipX: 0.15,
+      footF: [0.6, 0],
+      footB: [-0.5, 0],
+    },
+  ),
+  cannon_shot: strike(
+    { handF: [0.3, 0.2], handB: [0.4, 0.25], lean: -8, hipX: -0.05 },
+    { handF: [0.95, 0.15], handB: [0.7, 0.18], lean: -2, hipX: -0.08, footF: [0.45, 0], footB: [-0.5, 0] },
+  ),
+  booster: strike(
+    { hipY: 0.66, lean: 18, handF: [0.3, -0.2], handB: [-0.2, -0.3] },
+    { hipY: 1, lean: 0, handF: [0.35, 1.0], handB: [0.0, -0.4], footF: [0.1, 0.25], footB: [-0.15, 0.15] },
+  ),
+  beam: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [
+        0.3,
+        P({
+          hipY: 0.84,
+          lean: -14,
+          handF: [0.3, 0.4],
+          handB: [0.3, 0.42],
+          footF: [0.5, 0],
+          footB: [-0.55, 0],
+        }),
+      ],
+      [
+        0.4,
+        P({
+          hipY: 0.8,
+          lean: -6,
+          handF: [1.0, 0.18],
+          handB: [0.85, 0.2],
+          footF: [0.55, 0],
+          footB: [-0.6, 0],
+        }),
+      ],
+      [
+        0.6,
+        P({
+          hipY: 0.8,
+          lean: -8,
+          handF: [1.0, 0.18],
+          handB: [0.85, 0.2],
+          footF: [0.55, 0],
+          footB: [-0.6, 0],
+        }),
+      ],
+      [1, STANCE],
+    ],
+  },
+  staff_strike: strike(
+    { handF: [-0.1, 0.5], handB: [0.2, 0.3], lean: -6 },
+    { handF: [0.95, 0.15], handB: [0.4, 0.2], lean: 18, hipX: 0.08, footF: [0.5, 0] },
+  ),
+  staff_spin: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [0.3, P({ handF: [0.5, 0.9], handB: [-0.4, -0.2], lean: 0 })],
+      [0.42, P({ handF: [0.9, 0.0], handB: [-0.9, 0.2], lean: 10, hipY: 0.84 })],
+      [0.5, P({ handF: [-0.4, -0.6], handB: [0.5, 0.9], lean: 10, hipY: 0.84 })],
+      [0.6, P({ handF: [0.9, 0.1], handB: [-0.9, 0.1], lean: 12, hipY: 0.84 })],
+      [1, STANCE],
+    ],
+  },
+  orb_cast: strike(
+    { handF: [0.3, 0.8], handB: [-0.2, 0.7], lean: -10, head: -10 },
+    { handF: [0.95, 0.35], handB: [0.6, 0.5], lean: 8, footF: [0.42, 0] },
+  ),
+  victory_bow: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [
+        0.4,
+        P({
+          lean: 34,
+          head: 20,
+          hipY: 0.92,
+          handF: [0.25, 0.25],
+          handB: [0.25, 0.27],
+          footF: [0.12, 0],
+          footB: [-0.12, 0],
+        }),
+      ],
+      [
+        1,
+        P({
+          lean: 30,
+          head: 18,
+          hipY: 0.93,
+          handF: [0.24, 0.26],
+          handB: [0.24, 0.28],
+          footF: [0.12, 0],
+          footB: [-0.12, 0],
+        }),
+      ],
+    ],
+  },
+  victory_cast: {
+    loop: false,
+    keys: [
+      [0, STANCE],
+      [
+        0.4,
+        P({
+          lean: -8,
+          head: -18,
+          hipY: 0.96,
+          handF: [0.5, 0.9],
+          handB: [-0.5, 0.85],
+          footF: [0.2, 0],
+          footB: [-0.2, 0],
+        }),
+      ],
+      [
+        1,
+        P({
+          lean: -6,
+          head: -16,
+          hipY: 0.97,
+          handF: [0.48, 0.92],
+          handB: [-0.48, 0.88],
+          footF: [0.2, 0],
+          footB: [-0.2, 0],
+        }),
+      ],
+    ],
+  },
   flurry: {
     loop: true,
     keys: [

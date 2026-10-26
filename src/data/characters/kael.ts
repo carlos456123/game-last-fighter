@@ -1,4 +1,5 @@
 import type { FighterData } from '@/types';
+import { UNLOCK_RULES } from '@/data/progression/unlocks';
 import { CANCELS, hit, move } from './moveFactory';
 
 /**
@@ -16,7 +17,7 @@ export const KAEL: FighterData = {
   weaknessKey: 'fighters.kael.weakness',
   archetype: 'balanced',
   mainAttribute: 'technique',
-  unlock: { type: 'default' },
+  unlock: UNLOCK_RULES.kael,
   stats: {
     health: 100,
     walkSpeed: 230,

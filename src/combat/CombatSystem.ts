@@ -89,13 +89,14 @@ export class CombatSystem {
         const pb = p.box();
         const qb = q.box();
         if (!rectsOverlap(pb, qb)) continue;
-        p.alive = false;
-        q.alive = false;
         const c = overlapCenter(pb, qb);
-        this.events.emit('projectileEnd', { id: p.id, x: c.x, y: c.y, clash: true });
-        this.events.emit('projectileEnd', { id: q.id, x: c.x, y: c.y, clash: true });
-        p.clashed = true;
-        q.clashed = true;
+        // Zone projectiles absorb an opposing projectile and lose one of their hits.
+        for (const proj of [p, q]) {
+          if (proj.absorbHit()) continue;
+          proj.alive = false;
+          proj.clashed = true;
+          this.events.emit('projectileEnd', { id: proj.id, x: c.x, y: c.y, clash: true });
+        }
       }
     }
     this.prune();
@@ -119,6 +120,22 @@ export class CombatSystem {
     if (move.groundedTargetsOnly && defender.airborne) return;
     const hurt = firstOverlap(hitbox, defender.hurtboxes());
     if (!hurt) return;
+    if (defender.isCountering() && defender.move?.counter) {
+      attacker.hitIndicesDone.add(index);
+      const point = overlapCenter(hitbox, hurt);
+      const counterMove = defender.move;
+      defender.triggerCounter();
+      this.events.emit('counter', { fighter: defender.side, x: point.x, y: point.y, projectile: false });
+      out.push({
+        attacker: defender,
+        defender: attacker,
+        move: counterMove,
+        hit: counterMove.counter!.hit,
+        point,
+        projectile: null,
+      });
+      return;
+    }
     if (defender.isInvulnerable()) {
       this.checkPerfectDodge(defender);
       return;
@@ -140,14 +157,23 @@ export class CombatSystem {
       const attacker = fighters[0].side === p.owner ? fighters[0] : fighters[1];
       const defender = attacker === fighters[0] ? fighters[1] : fighters[0];
       if (p.data.grounded && defender.airborne) continue;
+      if (!p.ready) continue;
       const box = p.box();
       const hurt = firstOverlap(box, defender.hurtboxes());
       if (!hurt) continue;
+      if (defender.isCountering()) {
+        // Counters swat projectiles away (no strike back at range).
+        defender.triggerCounter();
+        const c = overlapCenter(box, hurt);
+        this.events.emit('counter', { fighter: defender.side, x: c.x, y: c.y, projectile: true });
+        if (!p.absorbHit()) p.alive = false;
+        continue;
+      }
       if (defender.isInvulnerable()) {
         this.checkPerfectDodge(defender);
         continue;
       }
-      p.alive = false;
+      if (!p.absorbHit()) p.alive = false;
       const move = attacker.moves.get(p.moveId);
       if (!move) continue;
       out.push({ attacker, defender, move, hit: p.hit, point: overlapCenter(box, hurt), projectile: p });

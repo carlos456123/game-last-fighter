@@ -55,7 +55,20 @@ export interface FrameRange {
 export type HitLevel = 'high' | 'mid' | 'low' | 'overhead';
 export type ShakeLevel = 'none' | 'light' | 'medium' | 'heavy';
 
-export type VfxId = 'spark_light' | 'spark_heavy' | 'fire' | 'quake' | 'shadow' | 'kunai' | 'ultimate_burst';
+export type VfxId =
+  | 'spark_light'
+  | 'spark_heavy'
+  | 'fire'
+  | 'quake'
+  | 'shadow'
+  | 'kunai'
+  | 'ultimate_burst'
+  | 'wind'
+  | 'holy'
+  | 'chi'
+  | 'plasma'
+  | 'arcane'
+  | 'blood_fire';
 
 export type SfxId =
   | 'hit_light'
@@ -85,7 +98,17 @@ export type SfxId =
   | 'ui_click'
   | 'ui_back'
   | 'ui_error'
-  | 'unlock';
+  | 'unlock'
+  | 'counter'
+  | 'javelin'
+  | 'plasma'
+  | 'orb'
+  | 'beam'
+  | 'rush'
+  | 'pact'
+  | 'iai'
+  | 'booster'
+  | 'achievement';
 
 /** Properties applied when an attack (melee or projectile) connects. */
 export interface HitProperties {
@@ -132,7 +155,7 @@ export interface MoveMovement {
 }
 
 export interface ProjectileData {
-  visual: 'fireball' | 'shockwave' | 'kunai';
+  visual: 'fireball' | 'shockwave' | 'kunai' | 'javelin' | 'plasma' | 'orb' | 'lightLance';
   speed: number;
   lifetime: number;
   hitbox: BoxData;
@@ -144,6 +167,28 @@ export interface ProjectileData {
   spread: number;
   /** Ground waves hug the floor and can be jumped over. */
   grounded: boolean;
+  hit: HitProperties;
+  /** Zone projectiles stay alive after hitting, up to `hits` times with `interval` frames between hits. */
+  persistent?: { hits: number; interval: number };
+}
+
+/** A frame range of a move during which the fighter moves at a given speed (multi-step dashes). */
+export interface MovementSegment {
+  from: number;
+  to: number;
+  /** Forward speed px/s (relative to facing). */
+  vx: number;
+  /** Optional vertical impulse applied on the first frame of the segment. */
+  vy?: number;
+}
+
+/**
+ * Counter stance: if the fighter is attacked during the window, the attack is absorbed and the
+ * attacker is struck with `hit` (and the move's lock sequence, if any, starts).
+ */
+export interface CounterData {
+  from: number;
+  to: number;
   hit: HitProperties;
 }
 
@@ -198,6 +243,11 @@ export interface MoveData {
   landingLag?: number;
   /** Sound played when the move starts (swing sound is used when omitted). */
   startSfx?: SfxId;
+  /** Multi-step movement (overrides `movement` while a segment is active). */
+  path?: MovementSegment[];
+  counter?: CounterData;
+  /** Health paid to use the move. Can never knock out the user. */
+  healthCost?: number;
 }
 
 export type Archetype =
@@ -248,7 +298,21 @@ export type BodyFeature =
   | 'wraps'
   | 'beard'
   | 'belt'
-  | 'mask';
+  | 'mask'
+  | 'ponytail'
+  | 'katana'
+  | 'wingedHelmet'
+  | 'cape'
+  | 'spear'
+  | 'topknot'
+  | 'longBeard'
+  | 'robotHead'
+  | 'antenna'
+  | 'armCannon'
+  | 'longHair'
+  | 'staff'
+  | 'mohawk'
+  | 'spikedPad';
 
 export interface BodyData {
   /** Total standing height in px. */
@@ -269,7 +333,7 @@ export interface BodyData {
   guardHeight: number;
   lean: number;
   /** Victory pose variant (animation `victory_<name>`). */
-  victory: 'fist' | 'flex' | 'blades';
+  victory: 'fist' | 'flex' | 'blades' | 'bow' | 'cast';
 }
 
 export interface Palette {
@@ -294,7 +358,19 @@ export interface BehaviorProfile {
   preferredRange: number;
 }
 
-export type UnlockRule = { type: 'default' } | { type: 'wins'; count: number };
+/**
+ * How a fighter is unlocked. Every rule is checked by the progression system from recorded
+ * match results; the UI only displays it. `wins` counts valid Arcade wins (kept for save compatibility).
+ */
+export type UnlockRule =
+  | { type: 'default' }
+  | { type: 'wins'; count: number }
+  | { type: 'perfectDodges'; count: number }
+  | { type: 'flawlessWins'; count: number }
+  | { type: 'playerLevel'; level: number }
+  | { type: 'arcadeStreak'; count: number }
+  | { type: 'defeatShadow' }
+  | { type: 'tournamentWin' };
 
 export interface FighterData {
   id: string;
@@ -325,7 +401,7 @@ export type ArenaLayer =
   | { type: 'sun'; x: number; y: number; radius: number; color: number; glow: number }
   | {
       type: 'silhouette';
-      shape: 'arches' | 'towers' | 'mountains' | 'pillars' | 'skyline';
+      shape: 'arches' | 'towers' | 'mountains' | 'pillars' | 'skyline' | 'industrial' | 'temple';
       color: number;
       baseY: number;
       height: number;
@@ -334,7 +410,13 @@ export type ArenaLayer =
       alpha: number;
     }
   | { type: 'floor'; color: number; lineColor: number; edgeColor: number; pattern: 'stone' | 'metal' }
-  | { type: 'props'; kind: 'torches' | 'lamps'; color: number; spacing: number; scroll: number };
+  | {
+      type: 'props';
+      kind: 'torches' | 'lamps' | 'signs' | 'braziers';
+      color: number;
+      spacing: number;
+      scroll: number;
+    };
 
 export interface ArenaData {
   id: string;
@@ -346,12 +428,13 @@ export interface ArenaData {
   bounds: { left: number; right: number };
   spawn: { p1: number; p2: number };
   music: MusicId;
-  ambient: 'embers' | 'rain' | 'dust';
+  ambient: 'embers' | 'rain' | 'dust' | 'ash';
   ambientColor: number;
   layers: ArenaLayer[];
 }
 
-export type MusicId = 'menu' | 'battle_colosseum' | 'battle_neon' | 'victory';
+export type MusicId =
+  'menu' | 'battle_colosseum' | 'battle_neon' | 'battle_district' | 'battle_sanctuary' | 'boss' | 'victory';
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 export type Quality = 'low' | 'medium' | 'high';

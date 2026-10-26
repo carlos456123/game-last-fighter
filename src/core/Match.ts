@@ -27,6 +27,7 @@ export interface FighterMatchStats {
   ultimatesUsed: number;
   blocks: number;
   perfectDodges: number;
+  counters: number;
 }
 
 const emptyStats = (): FighterMatchStats => ({
@@ -38,6 +39,7 @@ const emptyStats = (): FighterMatchStats => ({
   ultimatesUsed: 0,
   blocks: 0,
   perfectDodges: 0,
+  counters: 0,
 });
 
 const TRAINING_REGEN_DELAY = 90;
@@ -151,6 +153,7 @@ export class Match {
     });
     this.events.on('block', (e) => this.stats[e.defender].blocks++);
     this.events.on('perfectDodge', (e) => this.stats[e.fighter].perfectDodges++);
+    this.events.on('counter', (e) => this.stats[e.fighter].counters++);
     this.events.on('moveStart', (e) => {
       if (e.move.kind === 'special') this.stats[e.fighter].skillsUsed++;
       if (e.move.kind === 'ultimate') this.stats[e.fighter].ultimatesUsed++;

@@ -45,6 +45,7 @@ export interface MatchEvents {
   land: { fighter: Side };
   dodge: { fighter: Side };
   perfectDodge: { fighter: Side; x: number; y: number };
+  counter: { fighter: Side; x: number; y: number; projectile: boolean };
   teleport: { fighter: Side; fromX: number; toX: number; y: number };
   stun: { fighter: Side };
   knockdown: { fighter: Side };

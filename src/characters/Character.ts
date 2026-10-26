@@ -97,6 +97,8 @@ export class Character {
   armorHitsLeft = 0;
   /** Ultimate lock: the move is frozen on its active frame while scripted hits play. */
   lockActive = false;
+  /** A counter stance already absorbed an attack during this move. */
+  counterTriggered = false;
 
   hitstun = 0;
   blockstun = 0;
@@ -197,6 +199,21 @@ export class Character {
       return this.moveFrame >= inv.from && this.moveFrame < inv.to;
     }
     return false;
+  }
+
+  /** True while a counter stance can absorb an incoming attack. */
+  isCountering(): boolean {
+    const c = this.move?.counter;
+    if (!c || this.counterTriggered || this.lockActive) return false;
+    return this.moveFrame >= c.from && this.moveFrame < c.to;
+  }
+
+  /** Called by the combat system when the counter absorbs an attack: the stance ends and recovery starts. */
+  triggerCounter(): void {
+    this.counterTriggered = true;
+    this.connected = true;
+    this.hitConfirmed = true;
+    if (this.move) this.moveFrame = Math.max(this.moveFrame, this.move.startup + this.move.active);
   }
 
   hasArmor(): boolean {
@@ -475,6 +492,8 @@ export class Character {
       this.stateFrame = 0;
     }
     this.skills.commit(move);
+    // Paying health never knocks the user out.
+    if (move.healthCost) this.health = Math.max(1, this.health - move.healthCost);
     this.move = move;
     this.moveFrame = 0;
     this.moveInstance++;
@@ -485,6 +504,7 @@ export class Character {
     this.teleported = false;
     this.whiffReported = false;
     this.lockActive = false;
+    this.counterTriggered = false;
     this.armorHitsLeft = move.armor?.hits ?? 0;
     this.running = false;
     if (move.context === 'ground') this.vx = 0;
@@ -554,7 +574,16 @@ export class Character {
     if (this.tryCancel(move)) return;
 
     const phase = this.movePhase;
-    if (move.movement) {
+    const segment = move.path?.find((p) => this.moveFrame >= p.from && this.moveFrame < p.to);
+    if (segment) {
+      this.vx = this.facing * segment.vx;
+      if (segment.vy !== undefined && this.moveFrame === segment.from) {
+        this.vy = segment.vy;
+        if (segment.vy > 0) this.y = Math.max(this.y, 0.01);
+      }
+    } else if (move.path && move.context === 'ground' && !this.airborne) {
+      this.vx = approach(this.vx, 0, 60);
+    } else if (move.movement) {
       const m = move.movement;
       const applies = m.phase === 'all' || m.phase === phase;
       if (applies) {

@@ -12,6 +12,9 @@ export class Projectile {
   /** Destroyed by an opposing projectile (end event already emitted). */
   clashed = false;
   age = 0;
+  /** Remaining hits for zone (persistent) projectiles. */
+  private hitsLeft: number;
+  private rehitCooldown = 0;
 
   constructor(
     readonly owner: Side,
@@ -22,7 +25,25 @@ export class Projectile {
     readonly vx: number,
     readonly vy: number,
     readonly facing: Facing,
-  ) {}
+  ) {
+    this.hitsLeft = data.persistent?.hits ?? 1;
+  }
+
+  /** False while a zone projectile waits between hits. */
+  get ready(): boolean {
+    return this.rehitCooldown === 0;
+  }
+
+  /**
+   * Spends one hit. Returns true if the projectile survives (zone projectiles with hits left),
+   * false if it should be destroyed.
+   */
+  absorbHit(): boolean {
+    this.hitsLeft--;
+    if (!this.data.persistent || this.hitsLeft <= 0) return false;
+    this.rehitCooldown = this.data.persistent.interval;
+    return true;
+  }
 
   get hit(): HitProperties {
     return this.data.hit;
@@ -30,6 +51,7 @@ export class Projectile {
 
   step(bounds: { left: number; right: number }): void {
     this.age++;
+    if (this.rehitCooldown > 0) this.rehitCooldown--;
     this.x += this.vx * FRAME_SECONDS;
     if (!this.data.grounded) this.y = Math.max(0, this.y + this.vy * FRAME_SECONDS);
     const margin = 120;

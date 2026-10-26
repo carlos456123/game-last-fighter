@@ -1,7 +1,11 @@
 # LAST FIGHTER
 
 Jogo de luta 2D original (luta + sobrevivência + progressão) para navegador, feito com **Phaser 4 + TypeScript + Vite**.
-Single-player offline: modo arcade "A Última Arena" contra IA, modo treino interativo, 3 lutadores, 2 arenas.
+Single-player offline: Arcade "A Última Arena" (com o chefe Reflexo), **Torneio da Última Arena** (chave de 8 lutadores),
+modo treino interativo, **9 lutadores** com mecânicas próprias, **4 arenas**, XP/níveis, maestria com especializações,
+conquistas, títulos e desbloqueios por desempenho.
+
+Jogue online: https://carlos456123.github.io/game-last-fighter/
 
 > O mundo é dominado pela **Última Arena**. Guerreiros que restaram são convocados. Não basta vencer — é preciso sobreviver.
 
@@ -62,9 +66,11 @@ src/
 ├── animation/   PoseLibrary (poses-chave), Skeleton (IK), AnimationRegistry (estado → animação), FighterRenderer
 ├── render/      ArenaRenderer (parallax/iluminação/partículas), VfxManager (efeitos por eventos)
 ├── ui/          design system (theme), Button, Widgets, HUD, barras, slots, VirtualControls, ícones...
-├── systems/     Save (versionado + migração), Settings, Localization, Audio (WebAudio sintetizado), Progression, Assets
-├── scenes/      Boot, Preload, Menu, CharacterSelect, Tutorial, Battle, Pause, Victory, Defeat, Settings, Credits
-├── data/        lutadores, arenas, locales/pt-BR.json
+├── systems/     Save (v2 + migração + espelho), Settings, Localization, Audio, Progression (XP/maestria/conquistas),
+│                Tournament (chave pura com RNG semeado), MatchIds, Assets
+├── scenes/      Boot, Preload, Menu, CharacterSelect, Tutorial, Battle, Pause, Victory, Defeat, Settings, Credits,
+│                Tournament, Progression, Dialog (cenas de história puláveis)
+├── data/        lutadores, arenas, progression/ (unlocks, specializations, achievements), locales/pt-BR.json
 └── config/      gameConfig (todas as constantes centrais), phaserConfig
 ```
 
@@ -88,8 +94,10 @@ Princípios:
 2. Defina corpo/paleta/acessórios (`body.features`) — o rig procedural desenha a silhueta a partir disso.
 3. Registre em `src/data/characters/index.ts` (`FIGHTERS`).
 4. Adicione os textos em `src/data/locales/pt-BR.json` (`fighters.<id>.*` e `moves.<moveId>.*`).
-5. Ajuste o `ai` (perfil 0–100). Os papéis dos golpes (zoning, antiaéreo, aproximação) são inferidos dos dados.
-6. `npm run test` valida dados, chaves de texto e faixas de balanceamento automaticamente.
+5. Ajuste o `ai` (perfil 0–100). Os papéis dos golpes (zoning, antiaéreo, aproximação, contra) são inferidos dos dados.
+6. Defina a regra de desbloqueio em `src/data/progression/unlocks.ts` (`UNLOCK_RULES`) e duas especializações em
+   `src/data/progression/specializations.ts`, com textos `specs.<id>.*`.
+7. `npm run test` valida dados, chaves de texto (inclusive as dinâmicas) e faixas de balanceamento automaticamente.
 
 ## Como adicionar uma arena
 
@@ -101,7 +109,9 @@ Princípios:
 Adicione um `MoveData` ao lutador e aponte um slot (`skill`, `special`, `ultimate`...) para ele. Campos disponíveis:
 `startup/active/recovery`, `hitbox`, `hits`, `hit` (dano, chip, stun, hitstun, blockstun, knockback, launch, knockdown, nível
 alto/médio/baixo/overhead, hitstop, tremor, VFX, SFX), `energyCost`, `cooldown`, `movement`, `projectile`, `teleport`,
-`invulnerable`, `armor`, `cinematicFreeze`, `lock` (sequência de ultimate), `groundedTargetsOnly`, `cancels`, `chain`, `startSfx`.
+`invulnerable`, `armor`, `cinematicFreeze`, `lock` (sequência de ultimate), `groundedTargetsOnly`, `cancels`, `chain`, `startSfx`,
+`path` (deslocamento em segmentos), `counter` (janela de contra-ataque que também rebate projéteis), `healthCost` (custa vida,
+nunca abaixo de 1) e `projectile.persistent` (projétil que fica no campo e acerta várias vezes).
 Se precisar de uma nova pose, adicione-a em `animation/PoseLibrary.ts` e referencie pelo campo `animation`.
 
 ## Como adicionar um asset
@@ -109,8 +119,16 @@ Se precisar de uma nova pose, adicione-a em `animation/PoseLibrary.ts` e referen
 Registre em `ASSET_CATALOG` (`src/systems/AssetManager.ts`) com caminho em `public/assets/...`. Se o arquivo faltar, o jogo
 gera um placeholder identificado e registra o aviso — nada quebra. Liste pendências em `PENDING_ASSETS.md`.
 
+## Progressão e save
+
+- XP de jogador, maestria por lutador, conquistas, títulos e desbloqueios ficam em `localStorage` (save v2). O save antigo
+  (v1) é migrado sozinho. Se o save principal corromper, o jogo recupera a cópia `-last-good`.
+- Cada luta tem um id único; recompensas de uma mesma luta nunca são contadas duas vezes.
+- Não existe backend nem comando para desbloquear tudo: o progresso vem só de jogar.
+
 ## Deploy
 
+Cada push na `main` publica automaticamente no GitHub Pages (`.github/workflows/deploy.yml`).
 `npm run build` gera `dist/` estático com caminhos relativos (`base: './'`), compatível com GitHub Pages, Netlify, Vercel e
 Cloudflare Pages sem configuração específica. Existe um `manifest.webmanifest` preparando um futuro PWA (sem service worker).
 

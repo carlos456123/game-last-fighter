@@ -1,4 +1,4 @@
-# LAST FIGHTER — Documento de Design (v0.1)
+# LAST FIGHTER — Documento de Design (v0.2)
 
 ## Identidade
 
@@ -26,8 +26,63 @@
 | Ultimate (I)   | Juramento Final — investida que prende em sequência | Colapso Tectônico — terremoto (pule para evitar) | Eclipse — teleporte + 8 cortes             |
 | Fraqueza       | nenhuma vantagem extrema                            | lento, sofre contra mobilidade                   | pouca vida/defesa                          |
 
-Final da escada arcade: **Reflexo** — sombra do próprio lutador (mesmos golpes, IA mais agressiva/defensiva, paleta sombria).
-Nyx começa bloqueada: **vença 2 batalhas** (o motivo e o progresso aparecem no card).
+### Elenco expandido
+
+| Lutador    | Título               | Arquétipo  | Vida / defesa | Corrida | Mecânica própria                                                                                                                                | Fraqueza                                   |
+| ---------- | -------------------- | ---------- | ------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Ayame      | Lâmina do Vento      | Velocidade | 90 / 0.95     | 500     | katana; **iaido** de alto dano; Passo do Vento (deslocamento em trajetória); corte crescente **overhead**; ultimate Pétalas com sequência presa | errar o iaido deixa Ayame exposta          |
+| Valquíria  | A Campeã Alada       | Versátil   | 100 / 1.02    | 420     | lança de alcance longo; **dardo** arremessado; Égide (armadura); ultimate Julgamento em mergulho                                                | golpes longos e lentos, sofre de perto     |
+| Mestre Han | A Montanha Paciente  | Defesa     | 98 / 1.08     | 380     | **postura de contra-ataque** (Água Parada) que devolve golpes e rebate projéteis; Passo do Tigre; ultimate-contra Céu Invertido                 | pouca pressão; sofre contra quem não ataca |
+| R-0N       | Unidade de Contenção | Zoner      | 108 / 1.05    | 340     | canhão de **plasma**; Booster antiaéreo com armadura; ultimate Sobrecarga (feixe de 960 px, 6 acertos)                                          | pesado, recuperações longas                |
+| Vesper     | A Tecelã de Órbitas  | Controle   | 92 / 0.95     | 390     | **orbes persistentes** que ocupam espaço (3 acertos cada); Lança de Luz baixa; ultimate Constelação (5 orbes)                                   | frágil quando o oponente encosta           |
+| Dante      | A Brasa Insaciável   | Brutal     | 96 / 0.94     | 470     | Investida; **Pacto**: troca 8 de vida por armadura e dano; ultimate Inferno (custa 10 de vida)                                                  | recuperações longas e custo de vida        |
+
+Vida mínima após custo de vida: 1 (Dante nunca se derrota sozinho).
+
+### Desbloqueios (regras centralizadas em `src/data/progression/unlocks.ts`)
+
+| Lutador     | Como desbloquear                           |
+| ----------- | ------------------------------------------ |
+| Kael, Bronn | disponíveis desde o início                 |
+| Nyx         | vencer 2 lutas no Arcade                   |
+| Ayame       | 10 esquivas perfeitas                      |
+| Mestre Han  | 5 vitórias sem perder rodada               |
+| R-0N        | nível de jogador 5                         |
+| Vesper      | sequência de 3 vitórias no Arcade          |
+| Dante       | derrotar o Reflexo                         |
+| Valquíria   | primeiro título do Torneio da Última Arena |
+
+O card mostra requisito e progresso. Não há desbloqueio administrativo; recompensas são concedidas uma única vez
+(`claimedMatches` impede contabilizar a mesma luta duas vezes).
+
+Final da escada arcade: **Reflexo** — sombra do próprio lutador (com a especialização do jogador, IA adaptativa que
+lê o hábito de atacar baixo e de pular).
+
+## Progressão
+
+- **XP e nível de jogador:** `xpForLevel(n) = 100·(n−1)·n` (nível 5 = 2000 XP), máximo 30. Vitória 100, +30 por fase do
+  Arcade, +80 por rodada do Torneio, bônus por perfeito/sem perder rodada/combo/vitória rápida, 20 por derrota (esforço).
+  Treino não dá XP.
+- **Maestria por lutador (I / II / III):** 300 e 900 XP do lutador. A partir da Maestria II o jogador escolhe 1 de 2
+  **especializações** (ex.: Brasa Afiada × Juramento Firme). Bônus de 5–10% (cooldown, custo, frames de armadura/contra,
+  invulnerabilidade...), nunca dano infinito nem combos novos. No Torneio os atributos são **padronizados**
+  (especializações desligadas).
+- **Conquistas:** 13 (primeira vitória, sequência, esquivas perfeitas, combo de 8, 5 perfeitas, caçador do Reflexo,
+  campeão da arena, maestria absoluta, colecionador, versátil, guardião, arsenal, viajante). Dão XP e títulos exibidos
+  no menu. Notificações aparecem só fora do combate.
+
+## Modos
+
+- **Arcade:** 5 oponentes em rotação + Reflexo na última arena. Derrotar o Reflexo libera Dante.
+- **Torneio da Última Arena:** 8 lutadores em chave eliminatória (quartas, semi, final no Santuário das Cinzas),
+  salvo a cada luta (pode recarregar no meio). Derrota encerra a edição; abandonar exige confirmação.
+- **Narrativa:** o Conselho da Arena apresenta as rodadas; Valquíria é a campeã que defende o título; o Reflexo
+  surge no fim do Arcade. Cenas curtas, sempre puláveis.
+
+## Arenas
+
+Coliseu Partido, Doca Neon, **Distrito Vertical** (chuva, letreiros, prédios industriais) e **Santuário das Cinzas**
+(templo nas montanhas, braseiros, cinzas no ar, palco da final do Torneio).
 
 ## Regras de combate (resumo numérico em `src/config/gameConfig.ts`)
 
@@ -45,8 +100,14 @@ Nyx começa bloqueada: **vença 2 batalhas** (o motivo e o progresso aparecem no
 - Nenhum lutador domina outro em todos os atributos.
 - IA difícil vence a fácil na maioria das simulações (`tests/unit/ai.test.ts`).
 
-## Expansão planejada (fase 13)
+- Os 9 lutadores mantêm toques-para-KO e tempo-para-KO em faixas testadas (`tests/unit/roster.test.ts`).
+- Cada novo lutador tem perfil de IA próprio e teste que exercita sua mecânica (contra, custo de vida, orbe persistente...).
 
-Meta de 12–15 lutadores cobrindo os demais arquétipos (zoner, técnico, controle, combo, defensivo...). Cada novo lutador é
-um arquivo de dados + textos (ver README). Novas arenas idem. A arquitetura de XP/níveis já existe; skins, moedas,
-desafios e conquistas podem ser acrescentados ao `SaveData` via migração de versão.
+## Save
+
+Versão 2 (`SAVE_VERSION`), com migração automática da v1, sanitização de campos e cópia espelho `-last-good` usada se o
+save principal corromper.
+
+## Próximos passos
+
+Arte final por spritesheets (ver `PENDING_ASSETS.md`), mais lutadores e arenas seguindo o mesmo formato de dados.

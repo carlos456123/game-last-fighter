@@ -22,7 +22,7 @@ export const getFighter = (id: string): FighterData => {
 export const hasFighter = (id: string): boolean => FIGHTERS.some((f) => f.id === id);
 
 /** Dark palette used by the final ladder boss "Reflexo" (a shadow of the player's fighter). */
-const shadowPalette = (p: Palette): Palette => ({
+export const shadowPalette = (p: Palette): Palette => ({
   primary: 0x2a2a35,
   secondary: 0x111118,
   accent: p.energy,
@@ -55,7 +55,15 @@ export const validateFighter = (data: FighterData): string[] => {
     if (ids.has(m.id)) errors.push(`duplicate move id ${m.id}`);
     ids.add(m.id);
     if (m.startup < 1 || m.active < 1 || m.recovery < 0) errors.push(`${m.id}: invalid frame data`);
-    if (!m.hitbox && !m.projectile) errors.push(`${m.id}: needs a hitbox or projectile`);
+    if (!m.hitbox && !m.projectile && !m.counter)
+      errors.push(`${m.id}: needs a hitbox, projectile or counter`);
+    if (m.counter && (m.counter.from < 0 || m.counter.to > m.startup + m.active))
+      errors.push(`${m.id}: counter window outside the move`);
+    if (m.healthCost !== undefined && (m.healthCost < 0 || m.healthCost > 20))
+      errors.push(`${m.id}: health cost out of range`);
+    for (const seg of m.path ?? [])
+      if (seg.from >= seg.to || seg.to > m.startup + m.active + m.recovery)
+        errors.push(`${m.id}: invalid path segment`);
     if (m.hits < 1 || m.hits > m.active) errors.push(`${m.id}: hits must be within active frames`);
     if (m.chain && !data.moves.some((x) => x.id === m.chain))
       errors.push(`${m.id}: chain ${m.chain} missing`);

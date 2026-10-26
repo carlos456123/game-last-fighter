@@ -55,11 +55,21 @@ export const maxReach = (data: FighterData): number =>
 const scale = (value: number, min: number, max: number): number =>
   Math.round(clamp(1 + ((value - min) / (max - min)) * 9, 1, 10));
 
-export const computeRatings = (data: FighterData): Ratings => ({
-  power: scale(normalDps(data), 18, 30),
-  defense: scale(effectiveHealth(data), 70, 140),
-  speed: scale(data.stats.walkSpeed, 150, 290),
-  range: scale(maxReach(data) + (data.moves.some((m) => m.projectile) ? 20 : 0), 80, 140),
-  mobility: scale(data.stats.runSpeed + data.stats.airJumps * 120 + data.dodge.distance, 400, 860),
-  technique: scale(lightChainLength(data) * 2 + data.moves.filter((m) => m.cancels.length > 0).length, 8, 16),
-});
+export const computeRatings = (data: FighterData): Ratings => {
+  const projectileMoves = data.moves.filter((m) => m.projectile && m.kind !== 'ultimate').length;
+  const zoning = (projectileMoves > 0 ? 40 : 0) + (projectileMoves > 1 ? 20 : 0);
+  return {
+    power: scale(normalDps(data), 13, 24),
+    defense: scale(effectiveHealth(data), 70, 140),
+    speed: scale(data.stats.walkSpeed, 150, 290),
+    range: scale(maxReach(data) + zoning, 100, 200),
+    mobility: scale(data.stats.runSpeed + data.stats.airJumps * 120 + data.dodge.distance, 400, 860),
+    technique: scale(
+      lightChainLength(data) * 2 +
+        data.moves.filter((m) => m.cancels.length > 0).length +
+        data.moves.filter((m) => m.counter || m.path || m.teleport).length * 2,
+      8,
+      16,
+    ),
+  };
+};

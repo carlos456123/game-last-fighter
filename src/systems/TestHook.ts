@@ -29,6 +29,8 @@ export interface TestHookApi {
     p2: FighterSnapshot;
     aiState: string | null;
   } | null;
+  /** Frame data of one move of a fighter in the running battle (after specializations). */
+  move(side: Side, moveId: string): { cooldown: number; energyCost: number; damage: number } | null;
   setHealth(side: Side, value: number): void;
   setEnergy(side: Side, value: number): void;
   setAIEnabled(enabled: boolean): void;
@@ -85,6 +87,12 @@ export const installTestHook = (game: Phaser.Game): void => {
         p2: snap(api, 'p2'),
         aiState: api.ai?.state ?? null,
       };
+    },
+    move: (side, moveId) => {
+      const m = battleApi()
+        ?.match.fighter(side)
+        .data.moves.find((x) => x.id === moveId);
+      return m ? { cooldown: m.cooldown, energyCost: m.energyCost, damage: m.hit?.damage ?? 0 } : null;
     },
     setHealth: (side, value) => {
       const api = battleApi();

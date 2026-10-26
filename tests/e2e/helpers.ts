@@ -74,3 +74,31 @@ export const closeDistance = async (page: Page): Promise<void> => {
     .toBeLessThan(115);
   await page.keyboard.up('KeyD');
 };
+
+/**
+ * Wins the current best-of-3 with real jabs. The AI is paused and the hook only lowers the
+ * opponent's HP so each round ends on the next connected hit.
+ */
+export const winMatch = async (page: Page): Promise<void> => {
+  for (let round = 0; round < 2; round++) {
+    await waitForPhase(page, 'fight', 60_000);
+    await page.evaluate(() => window.__LF__!.setAIEnabled(false));
+    await closeDistance(page);
+    await page.evaluate(() => window.__LF__!.setHealth('p2', 1));
+    await expect
+      .poll(
+        async () => {
+          await page.keyboard.press('KeyJ');
+          return (await battle(page))?.phase;
+        },
+        { timeout: 20_000 },
+      )
+      .not.toBe('fight');
+  }
+};
+
+/** Skips a story scene if one is showing. */
+export const skipDialog = async (page: Page): Promise<void> => {
+  await waitForScene(page, 'DialogScene');
+  await clickTarget(page, 'dialog-skip');
+};
